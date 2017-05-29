@@ -2,7 +2,6 @@ iyear
 imonth
 iday
 country
-region
 latitude
 longitude
 attacktype1
@@ -16,3 +15,6 @@ nwound
 nwoundte
 ishostkid
 nhostkid
+ransom
+ransomamt
+ransompaid
