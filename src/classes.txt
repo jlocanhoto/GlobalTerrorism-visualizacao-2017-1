@@ -1,0 +1,30 @@
+Classes Definitions:
+------------------
+
+master class:
+GlobalTerrorism
+
+=========
+== nlj ==
+=========
+
+Attack
+
+Terrorist
+
+WorldMap
+
+==========
+== jloc ==
+==========
+
+Timeline
+	+ Timeline Years
+	+ Timeline Months
+
+RadViz
+(https://bl.ocks.org/biovisualize/a91f514aaf57eabf8e36)
+
+Scatterplot (Money x Deaths Number)
+TimeSeries
+Stacked Area Graph
