@@ -1,16 +1,16 @@
 class Timeline {
 	constructor(space, range) {
-		var svg = null;
-
+		// PUBLIC VARIABLES
 		this.g;
 		// spaceObj = {pos: {x: 0, y: 0}, size: {width: 0, height: 0}, margin: {top: 0, bottom: 0, left: 0, right: 0} }
 		this.space = space;
 		// rangeObj = {min: 1970, max: 2015}
 		this.range = range;
-		/*
-		a = document.createElement("div")
-		d3.select(a).append("svg")
-		*/
+
+		// PRIVATE VARIABLES
+		var svg = null;
+
+		// PRIVATE FUNCTIONS
 		function getOrdinalArray(range) {
 			var list = [];
 
@@ -23,7 +23,7 @@ class Timeline {
 
 		function getDiscreteRange(range, length) {
 			var list = [];
-			var step = (range.max - range.min)/length;
+			const step = (range.max - range.min)/length;
 
 			for (let i = 0; i < length; i++) {
 				list.push(i*step);
@@ -32,12 +32,29 @@ class Timeline {
 			return list;
 		}
 
+		function addScaleCircles(g, ticks, xScale, margin) {
+			var radius = 15;
+
+			var ticksData = g.selectAll("circle")
+							 .data(ticks);
+
+			ticksData.exit().remove();
+
+			var ticksCircles = ticksData.enter()
+										.append("circle")
+										.merge(ticksData)
+										.attr("class", "timeNodes")
+										.attr("cx"   , (d) => xScale(d)+margin.left)
+										.attr("cy"   , ( ) => ((+svg.attr("height")) - margin.bottom))
+										.attr("r"    , radius);
+		}
+
 		function addAxis(g, xScale, margin) {
-			var step = (range.max - range.min)/9;
+			const step = (range.max - range.min)/9;
 
 			var xAxisGroup = g.append("g")
 							  .attr("class", "xAxis")
-							  .attr("transform", "translate("+ margin.left + ", " + ((+svg.attr("height")) - margin.bottom) + ")");
+							  .attr("transform", "translate(" + margin.left + ", " + ((+svg.attr("height")) - margin.bottom) + ")");
 
 			let domain = xScale.domain();
 			let ticksMin = domain[0];
@@ -49,19 +66,20 @@ class Timeline {
 				ticks.push(Math.round(i));
 			}
 
-			//console.log(ticks)
 			//var ticks = xScale.domain().filter((d, i) => (!(i%Math.round(step)) || (d === 2015) ));
 			var xAxis = d3.axisBottom(xScale)
 						  .tickValues(ticks)
 						  .tickSizeInner(25);
 
 			xAxisGroup.call(xAxis);
+
+			var gTicks = g.append("g")
+						  .attr("id", "ticksGroup");
+
+			addScaleCircles(gTicks, ticks, xScale, margin);
 		}
 
-		function addScaleCircles(g, xScale) {
-			
-		}
-
+		// PUBLIC FUNCTIONS
 		this.position = function(pos) {
 			if (svg !== null) {
 				svg.attr("transform", "translate(" + pos.x + "," + pos.y + ")");
@@ -83,7 +101,7 @@ class Timeline {
 				  .attr("height", +svg.attr("height"))
 				  .attr("x", 0)
 				  .attr("y", 0)
-				  .style("fill", "#DDDDDD");
+				  .style("fill", "#FFFFFF");
 
 			var xScale_domain = getOrdinalArray(this.range);
 			
