@@ -1,29 +1,31 @@
-<html>
-<head>
-	<title>Global Terrorism</title>
-</head>
-<body>
-	<div style="text-align:center;">
-		<h2>Global Terrorism</h2>
-		<h3>1970-2015</h3>
-	</div>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+          integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+          crossorigin=""/>
+		<title>Global Terrorism</title>
+	</head>
+	<body>
+    <div id="map"></div>
 
-	<h2>Introdu&ccedil;&atilde;o</h2>
-	<p></p>
-	<h2>Motiva&ccedil;&otilde;es</h2>
-	<p></p>
-	<h2>Base de Dados</h2>
-	<p><a href="https://www.kaggle.com/START-UMD/gtd">Kaggle</a></p>
-	<h2>Grupos Terroristas</h2>
-	<p></p>
-	<h2>A Visualiza&ccedil;&atilde;o</h2>
-	<h3>O que se deseja mostrar?</h3>
-	<p></p>
-	<h3>Conceito inicial</h3>
-	<p></p>
-	<h3>C&oacute;digo</h3>
-	<p><a href="https://github.com/jlocx/GlobalTerrorism-visualizacao-2017-1">Github</a></p>
-	<h4>Refer&ecirc;ncias:</h4>
-	<p></p>
-</body>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
+            integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
+            crossorigin="">
+    </script>
+		<script src="leaflet-heat.js"></script>
+    <script type="text/javascript" src="map.js"></script>
+		<script type="text/javascript">
+
+      var dimensions = {width: 1200, height: 800};
+      var position = {x: 0, y: 0};
+      var map = new Map(dimensions, position, "map");
+
+      map.show([34.575503, 69.240073], 6);
+			map.heatmap("Taliban");
+
+		</script>
+	</body>
 </html>
