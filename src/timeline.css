@@ -4,6 +4,20 @@ circle.timeNodes {
   stroke-width: 4px;
 }
 
+circle.timeNodes:hover {
+  stroke: #FF847C;
+}
+
+circle.miniTimeNodes {
+  fill: #A2D4AB;
+  stroke: #5A5050;
+  stroke-width: 2px;
+}
+
+circle.miniTimeNodes:hover {
+  stroke: #FF847C;
+}
+
 .tick line {
 	stroke-width: 0;
 }

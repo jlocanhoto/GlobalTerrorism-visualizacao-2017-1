@@ -32,21 +32,31 @@ class Timeline {
 			return list;
 		}
 
-		function addScaleCircles(g, ticks, xScale, margin) {
-			var radius = 15;
+		function addScaleCircles(g, ticks, miniTicks, xScale, margin) {
+			var radius = 12;
 
 			var ticksData = g.selectAll("circle")
-							 .data(ticks);
+							 .data(ticks.concat(miniTicks));
 
 			ticksData.exit().remove();
 
 			var ticksCircles = ticksData.enter()
 										.append("circle")
 										.merge(ticksData)
-										.attr("class", "timeNodes")
+										.attr("class", (d) => {
+											if (ticks.indexOf(d) !== -1)
+												return "timeNodes";
+											else
+												return "miniTimeNodes";
+										})
 										.attr("cx"   , (d) => xScale(d)+margin.left)
 										.attr("cy"   , ( ) => ((+svg.attr("height")) - margin.bottom))
-										.attr("r"    , radius);
+										.attr("r"    , (d) => {
+											if (ticks.indexOf(d) !== -1)
+												return radius;
+											else
+												return radius*0.3;
+										});
 		}
 
 		function addAxis(g, xScale, margin) {
@@ -60,10 +70,16 @@ class Timeline {
 			let ticksMin = domain[0];
 			let ticksMax = domain[domain.length-1];
 			var ticks = [];
+			var miniTicks = [];
 
 			for (let i = ticksMin; i <= ticksMax; i += step)
 			{
 				ticks.push(Math.round(i));
+				
+				for (let j = i + 1; (j < i+step) && (j < ticksMax); j++)
+				{
+					miniTicks.push(Math.round(j));
+				}				
 			}
 
 			//var ticks = xScale.domain().filter((d, i) => (!(i%Math.round(step)) || (d === 2015) ));
@@ -76,7 +92,7 @@ class Timeline {
 			var gTicks = g.append("g")
 						  .attr("id", "ticksGroup");
 
-			addScaleCircles(gTicks, ticks, xScale, margin);
+			addScaleCircles(gTicks, ticks, miniTicks, xScale, margin);
 		}
 
 		// PUBLIC FUNCTIONS
