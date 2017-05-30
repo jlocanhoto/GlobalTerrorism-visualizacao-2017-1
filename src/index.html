@@ -1,13 +1,33 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<title>Global Terrorism</title>
-	<script src="https://d3js.org/d3.v4.min.js"></script>
-	<script src="timeline.js"></script>
-	<!-- <script src="../d3/d3.min.js" charset="utf-8"></script> -->
-	<link rel="stylesheet" type="text/css" href="timeline.css">
-</head>
-<body>
-<script src="main.js"></script>
-</body>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+          integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+          crossorigin=""/>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
+        integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
+        crossorigin=""></script>
+    <script src="leaflet-heat.js"></script>
+    <!-- <script src="../d3/d3.min.js" charset="utf-8"></script> -->
+    <script src="timeline.js"></script>
+    <link rel="stylesheet" type="text/css" href="timeline.css">
+		<title>Global Terrorism</title>
+	</head>
+	<body>
+    <div id="map"></div>
+    <script type="text/javascript" src="map.js"></script>
+		<script type="text/javascript">
+
+      var dimensions = {width: 1200, height: 800};
+      var position = {x: 0, y: 0};
+      var map = new Map(dimensions, position, "map");
+
+      map.show([34.575503, 69.240073], 6);
+			map.heatmap("Taliban");
+
+		</script>
+    <script src="main.js"></script>
+	</body>
 </html>
