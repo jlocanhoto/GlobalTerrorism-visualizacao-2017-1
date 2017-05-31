@@ -16,7 +16,7 @@ class Map{
     show(latlong, zoomin){
         this.map = L.map(this.id).setView(latlong, zoomin);
 
-        L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoibmlsc29ubGltYSIsImEiOiJjajNhY2wwbXowMHBrMnFvN2NmYWRzeDI4In0.bW4qF_znV3ShcHTG_gQokQ', {
+        L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoibmlsc29ubGltYSIsImEiOiJjajNhY2wwbXowMHBrMnFvN2NmYWRzeDI4In0.bW4qF_znV3ShcHTG_gQokQ', {
             /*attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, \
                           <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, \
                           Imagery © <a href="http://mapbox.com">Mapbox</a>',*/
@@ -29,12 +29,12 @@ class Map{
       var that = this;
       var heat = L.heatLayer([ ], {radius: 20,
                     maxZoom: 6,
-                    gradient: {
-                      0.4: 'blue',
-                      0.6: 'lime',
-                      0.85: 'yellow',
-                      0.97: 'yellow',
-                      1: 'red'
+                    gradient: {           
+                         '0.0': 'rgb(0, 0, 0)',
+                         '0.6': 'rgb(24, 53, 103)',
+                         '0.75': 'rgb(46, 100, 158)',
+                         '0.9': 'rgb(23, 173, 203)',
+                         '1.0': 'rgb(0, 250, 250)'
                     }
                   }).addTo(this.map);
 
@@ -44,12 +44,29 @@ class Map{
           var group = data.filter(function(d){ return d.gname == gname; });
           var kill = group.map(function(d){ var num = +d.nkill; if(!num) num = 0; return num; });
 
-          that.dScale.domain(d3.extent(kill));
+          that.dScale.domain([0, d3.max(kill)]);
 
-          for(var i = 0; i < group.length; i++){
-              heat.addLatLng([group[i].latitude, group[i].longitude, that.dScale(kill[i])]);
-          }
+          group.forEach(function(d, i){
+              var lat = d.latitude;
+              var lng = d.longitude;
+              var alt = that.dScale(kill[i]);
+
+              that.__delay__(1000).then(() => {
+                  console.log("waiting...");
+
+              }).then(() => { 
+                return heat.addLatLng([lat, lng, alt]);
+
+              });
+          });
+
+
       });
 
     }
+
+    __delay__(ms){
+        return new Promise(function (resolve) { return setTimeout(resolve, ms); });
+    };
+
 }
