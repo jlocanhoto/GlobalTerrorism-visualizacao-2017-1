@@ -1,0 +1,17 @@
+.buttons {
+  position: absolute;
+  display: block;
+  line-height: 50px;
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat:  no-repeat;
+  border: 2px solid #f5f5f5;
+  border-radius: 50%;
+  box-shadow: 0 0 3px gray;
+  outline: 0 none;
+  /*opacity: 0.7;*/
+}
+
+.buttons:active {
+  opacity: 0.5;
+}
