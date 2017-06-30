@@ -6,4 +6,4 @@ var rangeObj = {min: 1979, max: 2015};
 var timeline = new Timeline(spaceObj, rangeObj);
 timeline.add(body);
 
-var concentricRadviz = new ConcentricRadviz()
+//var concentricRadviz = new ConcentricRadviz()
