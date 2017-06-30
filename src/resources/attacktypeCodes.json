@@ -1,11 +1,14 @@
-attacktypeCodes = [
-	{"code": 1 , "attacktype": "ASSASSINATION"},
-	{"code": 2 , "attacktype": "ARMED ASSAULT"},
-	{"code": 3 , "attacktype": "BOMBING/EXPLOSION"},
-	{"code": 4 , "attacktype": "HIJACKING"},
-	{"code": 5 , "attacktype": "HOSTAGE TAKING (BARRICADE INCIDENT)"},
-	{"code": 6 , "attacktype": "HOSTAGE TAKING (KIDNAPPING)"},
-	{"code": 7 , "attacktype": "FACILITY / INFRASTRUCTURE ATTACK"},
-	{"code": 8 , "attacktype": "UNARMED ASSAULT"},
-	{"code": 9 , "attacktype": "UNKNOWN"}
-];
+attacktypeCodes = { 
+	"name": "Attack Type",
+	"classes":	[
+		{"code": 1 , "attacktype": "ASSASSINATION"},
+		{"code": 2 , "attacktype": "ARMED ASSAULT"},
+		{"code": 3 , "attacktype": "BOMBING/EXPLOSION"},
+		{"code": 4 , "attacktype": "HIJACKING"},
+		{"code": 5 , "attacktype": "HOSTAGE TAKING (BARRICADE INCIDENT)"},
+		{"code": 6 , "attacktype": "HOSTAGE TAKING (KIDNAPPING)"},
+		{"code": 7 , "attacktype": "FACILITY / INFRASTRUCTURE ATTACK"},
+		{"code": 8 , "attacktype": "UNARMED ASSAULT"},
+		{"code": 9 , "attacktype": "UNKNOWN"}
+	]
+};
