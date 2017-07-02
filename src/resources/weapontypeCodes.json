@@ -1,6 +1,7 @@
 weapontypeCodes = {
 	"name": "Weapon Type",
-	"classes":	[
+	"column": "weaptype1",
+	"codes":	[
 		{"code":  1 , "weapontype": "Biological"},
 		{"code":  2 , "weapontype": "Chemical"},
 		{"code":  3 , "weapontype": "Radiological"},

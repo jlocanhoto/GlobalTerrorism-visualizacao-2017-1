@@ -1,6 +1,7 @@
 attacktypeCodes = { 
 	"name": "Attack Type",
-	"classes":	[
+	"column": "attacktype1",
+	"codes":	[
 		{"code": 1 , "attacktype": "ASSASSINATION"},
 		{"code": 2 , "attacktype": "ARMED ASSAULT"},
 		{"code": 3 , "attacktype": "BOMBING/EXPLOSION"},

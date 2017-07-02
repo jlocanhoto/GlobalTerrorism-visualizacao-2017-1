@@ -1,6 +1,7 @@
 targettypeCodes = {
 	"name": "Target Type",
-	"classes":	[
+	"column": "targtype1",
+	"codes":	[
 		{"code":  1 , "targettype": "BUSINESS"},
 		{"code":  2 , "targettype": "GOVERNMENT (GENERAL)"},
 		{"code":  3 , "targettype": "POLICE"},
