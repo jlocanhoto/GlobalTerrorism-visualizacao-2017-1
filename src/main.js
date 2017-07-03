@@ -14,10 +14,13 @@ var sankeyDiagram = new SankeyDiagram();
 
 var pDataset = new Promise((resolve, reject) => {
 	d3.csv(datasetURL, function(d) {
-		resolve(alphabeticalOrder(d));
+		resolve(d);
 	});
 });
 
 pDataset.then((dataset) => {
-	sankeyDiagram.makeLinks(dataset);
+	sankeyDiagram.buildLinks(dataset);
+
+	sankeyDiagram.sankey.nodes(sankeyDiagram.nodes);
+	sankeyDiagram.sankey.links(sankeyDiagram.links);
 });
