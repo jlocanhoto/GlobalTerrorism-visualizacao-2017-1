@@ -8,16 +8,16 @@ var rangeObj = {min: 1979, max: 2015};
 var timeline = new Timeline(spaceObj, rangeObj);
 timeline.add(body);
 
-var sankeyDiagram;
+var sankeyDiagram = new SankeyDiagram();
 
 //var concentricRadviz = new ConcentricRadviz([1,2,3,4,5], [attacktypeCodes, targettypeCodes, weapontypeCodes]);
 
 var pDataset = new Promise((resolve, reject) => {
 	d3.csv(datasetURL, function(d) {
-		resolve(d);
+		resolve(alphabeticalOrder(d));
 	});
 });
 
 pDataset.then((dataset) => {
-	sankeyDiagram = new SankeyDiagram(dataset, [attacktypeCodes, targettypeCodes, weapontypeCodes]);
+	sankeyDiagram.makeLinks(dataset);
 });
