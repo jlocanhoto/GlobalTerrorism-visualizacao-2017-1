@@ -1,0 +1,36 @@
+circle.timeNodes {
+  fill: #A2D4AB;
+  stroke: #5A5050;
+  stroke-width: 4px;
+}
+
+circle.timeNodes:hover {
+  stroke: #FF847C;
+  cursor: pointer;
+}
+
+circle.miniTimeNodes {
+  fill: #A2D4AB;
+  stroke: #5A5050;
+  stroke-width: 2px;
+}
+
+circle.miniTimeNodes:hover {
+  stroke: #FF847C;  
+  cursor: pointer;
+}
+
+.tick line {
+	stroke-width: 0;
+}
+
+.tick text {
+	font-size: 10pt;
+	font-weight: 900;
+	fill: #5A5050;
+}
+
+path.domain {
+	stroke: #5A5050;
+	stroke-width: 4px;
+}
