@@ -123,7 +123,7 @@ $('#visualization-tab').on('click', function() {
 	<img src="` + lastCommit.author.avatar_url + `" style="height:50px">
 </div>
 <div class="col s2">
-	<span>` + lastCommit.author.login + `</span>
+	<span><b>` + lastCommit.author.login + `</b></span>
 </div>
 <div class="col s7">
 	<span>` + lastCommit.commit.message + `</span>
