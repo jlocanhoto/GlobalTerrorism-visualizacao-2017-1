@@ -72,70 +72,75 @@ var groups = [
 
 var flagGit = false;
 
-$.each(groups, function (index, value) {
-	$('#groups').children('.row').append(`
-<div class="col s12 m6 l4 xl3">
-	<div class="card">
-		<div class="card-image">
-			<img src="flags/` + value.img + `.png">
+$(document).ready(function() {
+	$('.page-footer').css({'background-color': '#7986cb'});
+	$('.nav-extended').css({'background-color': '#7986cb'});
+
+	$.each(groups, function (index, value) {
+		$('#groups').children('.row').append(`
+	<div class="col s12 m6 l4 xl3">
+		<div class="card">
+			<div class="card-image">
+				<img src="flags/` + value.img + `.png">
+			</div>
+			<div class="card-content">
+				<span class="card-title"><b>` + value.name + `</b></span>`
+				+`<p>Quantidade de ataques registrados na base de dados: ` + value.attacks + `</p>
+			</div>
+			<div class="card-action">
+				<a href="` + value.link + `" class="indigo-text text-lighten-2">Mais informações</a>
+			</div>
 		</div>
-		<div class="card-content">
-			<span class="card-title"><b>` + value.name + `</b></span>`
-			+`<p>Quantidade de ataques registrados na base de dados: ` + value.attacks + `</p>
-		</div>
-		<div class="card-action">
-			<a href="` + value.link + `" class="indigo-text text-lighten-2">Mais informações</a>
-		</div>
+	</div>`);
+	});
+	/*
+	var lastCommit = {author: {avatar_url: '', login: ''}, commit: {message: '', author: {date: ''}}};
+
+	lastCommit.author.avatar_url = 'https://avatars1.githubusercontent.com/u/17601055?v=3'
+	lastCommit.author.login = 'jlocx'
+	lastCommit.commit.message ='Made "Introdução" tab active at first'
+	lastCommit.commit.author.date = '2017-07-04T07:33:20Z'
+	*/
+
+	$('#visualization-tab').on('click', function() {
+		if (flagGit === false) {
+			flagGit = true;
+
+			$.ajax({
+			    url: 'https://api.github.com/repos/jlocx/GlobalTerrorism-visualizacao-2017-1/commits',  //Pass URL here 
+			    type: "GET", //Also use GET method
+			    crossDomain: true,
+			    dataType: 'jsonp',
+			    success: function(data) {
+			        //var time = $(data).find('.commit-tease').html();
+			        let lastCommit = data.data[0];
+			        /*
+			        console.log(lastCommit);
+			        console.log(lastCommit.author.avatar_url);
+			        console.log(lastCommit.author.login);
+			        console.log(lastCommit.commit.message);
+			        console.log(lastCommit.commit.author.date);
+					*/
+					let timeDifference = getDiffTime(lastCommit.commit.author.date);
+
+			        $('#last-commit').html(`<div class="col s1">
+		<img src="` + lastCommit.author.avatar_url + `" style="height:50px">
 	</div>
-</div>`);
-});
-/*
-var lastCommit = {author: {avatar_url: '', login: ''}, commit: {message: '', author: {date: ''}}};
+	<div class="col s2">
+		<span><b>` + lastCommit.author.login + `</b></span>
+	</div>
+	<div class="col s7">
+		<span>` + lastCommit.commit.message + `</span>
+	</div>
+	<div class="col s2">
+		<span>` + timeDifference + `</span>
+	</div>`);
+			    }
+			});
+		}
+	});
 
-lastCommit.author.avatar_url = 'https://avatars1.githubusercontent.com/u/17601055?v=3'
-lastCommit.author.login = 'jlocx'
-lastCommit.commit.message ='Made "Introdução" tab active at first'
-lastCommit.commit.author.date = '2017-07-04T07:33:20Z'
-*/
-
-$('#visualization-tab').on('click', function() {
-	if (flagGit === false) {
-		flagGit = true;
-
-		$.ajax({
-		    url: 'https://api.github.com/repos/jlocx/GlobalTerrorism-visualizacao-2017-1/commits',  //Pass URL here 
-		    type: "GET", //Also use GET method
-		    crossDomain: true,
-		    dataType: 'jsonp',
-		    success: function(data) {
-		        //var time = $(data).find('.commit-tease').html();
-		        let lastCommit = data.data[0];
-		        /*
-		        console.log(lastCommit);
-		        console.log(lastCommit.author.avatar_url);
-		        console.log(lastCommit.author.login);
-		        console.log(lastCommit.commit.message);
-		        console.log(lastCommit.commit.author.date);
-				*/
-				let timeDifference = getDiffTime(lastCommit.commit.author.date);
-
-		        $('#last-commit').html(`<div class="col s1">
-	<img src="` + lastCommit.author.avatar_url + `" style="height:50px">
-</div>
-<div class="col s2">
-	<span><b>` + lastCommit.author.login + `</b></span>
-</div>
-<div class="col s7">
-	<span>` + lastCommit.commit.message + `</span>
-</div>
-<div class="col s2">
-	<span>` + timeDifference + `</span>
-</div>`);
-		    }
-		});
-	}
-});
-
-$('.other-tab').on('click', function() {
-	flagGit = false;
+	$('.other-tab').on('click', function() {
+		flagGit = false;
+	});
 });

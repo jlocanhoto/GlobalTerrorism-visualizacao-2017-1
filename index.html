@@ -9,13 +9,26 @@
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	<!-- Compiled and minified JavaScript -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
-
+	<script src="index.js"></script>
 </head>
 <body>
-	<div style="text-align:center;">
-		<h2>Global Terrorism</h2>
-	</div>
+	<nav class="nav-extended">
+		<div class="nav-wrapper">
+			<a href="" class="brand-logo center">Global Terrorism</a>
+		</div>
+		<div class="nav-content">
+			<ul class="tabs tabs-fixed-width">
+				<li class="tab col s2 m3 l3 xl3 other-tab"><a class="active indigo-text text-lighten-2" href="#intro">Introdução</a></li>
+				<li class="tab col s2 m3 l3 xl3 other-tab"><a class="indigo-text text-lighten-2" href="#motivation">Motivações</a></li>
+				<li class="tab col s2 m3 l3 xl3 other-tab"><a class="indigo-text text-lighten-2" href="#groups">Grupos Terroristas</a></li>
+				<li id="visualization-tab" class="tab col s2 m3 l3 xl3"><a class="indigo-text text-lighten-2" href="#visualization">Visualização</a></li>
+				<div class="indicator indigo" style="z-index:1"></div>
+			</ul>
+		</div>
+	</nav>
+	<br>
 	<div class="row" style="width: 85%">
+		<!--
 		<div class="col s12">
 			<ul class="tabs tabs-fixed-width">
 				<li class="tab col s2 m3 l3 xl3 other-tab"><a class="active indigo-text text-lighten-2" href="#intro">Introdução</a></li>
@@ -25,6 +38,7 @@
 				<div class="indicator indigo" style="z-index:1"></div>
 			</ul>
 		</div>
+		-->
 		<div id="intro" class="col s12">
 			<h2>Introdução</h2>
 			<div class="divider"></div>
@@ -83,8 +97,8 @@
 				</div>
 
 				<h4><i>Screenshot</i> da visualização</h4>
-				<img src="images/work-in-progress-wip.jpg" style="height: 150px" />
-				<p><a href="https://jlocx.github.io/GlobalTerrorism-visualizacao-2017-1/src/" target="_blank">Demonstração <i class="material-icons">open_in_new</i></a></p>
+				<img src="images/work-in-progress-wip.jpg" style="height: 150px; display:block; margin: auto" />
+				<p style="text-align: center;"><a href="https://jlocx.github.io/GlobalTerrorism-visualizacao-2017-1/src/" target="_blank">Demonstração <i class="material-icons">open_in_new</i></a></p>
 				<h4>Código</h4>
 				<p>Nosso desenvolvimento está hospedado no <a href="https://github.com/jlocx/GlobalTerrorism-visualizacao-2017-1/" target="_blank">GitHub</a>.</p>
 				<div class="row">
@@ -115,6 +129,5 @@
 			</div>
 		</div>
 	</footer>
-	<script src="index.js"></script>
 </body>
 </html>
