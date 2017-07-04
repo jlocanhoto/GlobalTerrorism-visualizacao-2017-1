@@ -1,0 +1,22 @@
+span.emph {
+	color: #7986CB; /* indigo-text text-lighten-2 */
+	font-weight: 500;
+}
+
+.content {
+	font-size: 18pt;
+	text-align: justify;
+	text-justify: inter-word;
+}
+
+.fonte {
+	float: right;
+}
+
+/*
+.text-wrap {
+	float: right;
+	width: 60%;
+	margin: 10px;
+}
+*/

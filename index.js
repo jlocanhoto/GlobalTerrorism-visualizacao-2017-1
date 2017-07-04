@@ -12,7 +12,7 @@ var groups = [
 ];
 
 $.each(groups, function (index, value) {
-	$('#groups').find('.row').append(`
+	$('#groups').children('.row').append(`
 <div class="col s12 m4">
 	<div class="card">
 		<div class="card-image">
@@ -27,4 +27,16 @@ $.each(groups, function (index, value) {
 		</div>
 	</div>
 </div>`);
+});
+
+$.ajax({
+    url: 'https://api.github.com/repos/jlocx/GlobalTerrorism-visualizacao-2017-1/commits',  //Pass URL here 
+    type: "GET", //Also use GET method
+    crossDomain: true,
+    dataType: 'jsonp',
+    success: function(data) {
+        //var time = $(data).find('.commit-tease').html();
+        console.log(data.data[0]);
+        //$('#last-commit').append(time);
+    }
 });
