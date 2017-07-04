@@ -13,6 +13,18 @@ span.emph {
 	float: right;
 }
 
+.icon-devs {
+	height: 45px;
+}
+
+.last-commit {
+	height: 80px;
+	font-size: 1.2rem;
+	border-radius: 8px;
+	border: 2px solid #7986cb;	
+	background-color: #e8eaf6;
+}
+
 /*
 .text-wrap {
 	float: right;

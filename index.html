@@ -14,15 +14,14 @@
 <body>
 	<div style="text-align:center;">
 		<h2>Global Terrorism</h2>
-		<h3>1970 - 2015</h3>
 	</div>
 	<div class="row" style="width: 85%">
 		<div class="col s12">
 			<ul class="tabs tabs-fixed-width">
-				<li class="tab col s2 m3 l3 xl3"><a class="active indigo-text text-lighten-2" href="#intro">Introdução</a></li>
-				<li class="tab col s2 m3 l3 xl3"><a class="indigo-text text-lighten-2" href="#motivation">Motivações</a></li>
-				<li class="tab col s2 m3 l3 xl3"><a class="indigo-text text-lighten-2" href="#groups">Grupos Terroristas</a></li>
-				<li class="tab col s2 m3 l3 xl3"><a class="indigo-text text-lighten-2" href="#visualization">Visualização</a></li>
+				<li class="tab col s2 m3 l3 xl3 other-tab"><a class="active indigo-text text-lighten-2" href="#intro">Introdução</a></li>
+				<li class="tab col s2 m3 l3 xl3 other-tab"><a class="indigo-text text-lighten-2" href="#motivation">Motivações</a></li>
+				<li class="tab col s2 m3 l3 xl3 other-tab"><a class="indigo-text text-lighten-2" href="#groups">Grupos Terroristas</a></li>
+				<li id="visualization-tab" class="tab col s2 m3 l3 xl3"><a class="indigo-text text-lighten-2" href="#visualization">Visualização</a></li>
 				<div class="indicator indigo" style="z-index:1"></div>
 			</ul>
 		</div>
@@ -37,7 +36,7 @@
 
 					<h4>Base de dados</h4>
 
-					<p>Para cumprir com o objetivo, as informações e correlações entre os dados serão extraídos da base <a href="http://www.start.umd.edu/gtd/" target="_blank">Global Terrorism Database (GTD)</a> desenvolvida pelo centro de educação e pesquisa <a href="http://www.start.umd.edu/" target="_blank">START</a>.</p>
+					<p>Para cumprir com o objetivo, as informações e correlações entre os dados serão extraídos da base <a href="http://www.start.umd.edu/gtd/" target="_blank">Global Terrorism Database (GTD)</a>, desenvolvida pelo centro de educação e pesquisa <a href="http://www.start.umd.edu/" target="_blank">START</a>, que contém conteúdo sobre terrorismo mundial entre os anos de 1970 e 2015.</p>
 				</div>
 				<img class="col s12" src="images/GlobalTerrorism.png">
 				<div class="fonte"><p><b>Fonte: </b><a href="http://www.start.umd.edu/gtd/images/START_GlobalTerrorismDatabase_TerroristAttacksConcentrationIntensityMap_45Years.png" target="_blank">start.umd.edu</a></p></div>
@@ -62,6 +61,8 @@
 		</div>
 		<div id="groups" class="col s12">
 			<h2>Grupos Terroristas</h2>
+			<div class="divider"></div>
+			<br/>
 			<div class="row"></div>
 		</div>
 		<div id="visualization" class="col s12">
@@ -85,11 +86,35 @@
 				<img src="images/work-in-progress-wip.jpg" style="height: 150px" />
 				<p><a href="https://jlocx.github.io/GlobalTerrorism-visualizacao-2017-1/src/" target="_blank">Demonstração <i class="material-icons">open_in_new</i></a></p>
 				<h4>Código</h4>
-				<p>Nosso desenvolvimento está hospedado no GitHub.</p>
-				<iframe src="https://ghbtns.com/github-btn.html?user=jlocx&repo=GlobalTerrorism-visualizacao-2017-1&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+				<p>Nosso desenvolvimento está hospedado no <a href="https://github.com/jlocx/GlobalTerrorism-visualizacao-2017-1/" target="_blank">GitHub</a>.</p>
+				<div class="row">
+					<div id="last-commit" class="col s12 valign-wrapper last-commit">
+					</div>
+				</div>
 			</div>		
 		</div>
 	</div>
+	<footer class="page-footer">
+		<div class="container">
+			<div class="row">
+				<div class="col l6 s12">
+					<h5 class="white-text">Desenvolvedores</h5>
+						<p><img class="icon-devs" src="images/heisenberg-icon-grey.png"> <a href="https://github.com/NilsonLima" target="_blank"><span class="grey-text text-lighten-4">Nilson Lima</span></a> <span class="orange-text text-lighten-4"><i class="material-icons" style="font-size: 0.9rem;">email</i> nlj@cin.ufpe.br</span></p>
+						<p><img class="icon-devs" src="images/wolverine-icon-white2.png"> <a href="https://github.com/jlocx/" target="_blank"><span class="grey-text text-lighten-4">João Lucas Canhoto</span></a> <span class="orange-text text-lighten-4"><i class="material-icons" style="font-size: 0.9rem;">email</i> jloc@cin.ufpe.br</span></p>
+				</div>
+				<div class="col l4 offset-l2 s12">
+					<h5 class="white-text">Links</h5>
+					<iframe src="https://ghbtns.com/github-btn.html?user=jlocx&repo=GlobalTerrorism-visualizacao-2017-1&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+				</div>
+			</div>
+		</div>
+		<div class="footer-copyright">
+			<div class="container">
+				Julho de 2017
+				<a class="grey-text text-lighten-4 right" href="https://visualizacao-ufpe.github.io/data_vis_course_website/spring_2017/index.html" target="_blank">Site da Disciplina</a>
+			</div>
+		</div>
+	</footer>
 	<script src="index.js"></script>
 </body>
 </html>
