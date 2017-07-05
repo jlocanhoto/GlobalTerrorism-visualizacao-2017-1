@@ -9,9 +9,5 @@
   border-radius: 50%;
   box-shadow: 0 0 3px gray;
   outline: 0 none;
-  /*opacity: 0.7;*/
-}
-
-.buttons:active {
-  opacity: 0.5;
+  opacity: 1.0;
 }

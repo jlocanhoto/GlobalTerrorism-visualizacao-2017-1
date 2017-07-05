@@ -1,21 +1,44 @@
-var origNodes = [attacktypeCodes, targettypeCodes, weapontypeCodes];
-
 class SankeyDiagram {
-	constructor() {
-		this.sankey 	= d3.sankey();
+	constructor(sankeyDef) {
+		var svg 		= d3.select("#sankey").append("svg")
+							.attr("width", sankeyDef.size.width)
+							.attr("height", sankeyDef.size.height);
+
+		this.sankey 	= d3.sankey()
+							.nodeWidth(15)
+							.nodePadding(10)
+							.extent([1, 1], [sankeyDef.size.width - 1, sankeyDef.size.height - 6]);
+
+		this.link		= svg.append("g")
+							 .attr("class", "links")
+							 .attr("fill", "none")
+							 .attr("stroke", "#000")
+							 .attr("stroke-opacity", 0.2)
+							 .selectAll("path");
+
+		this.node		= svg.append("g")
+							 .attr("class", "nodes")
+							 .attr("font-family", "sans-serif")
+							 .attr("font-size", 10)
+							 .selectAll("g");
+
 		this.links 		= [];
 		this.nodes 		= [];
+		this.sankeyObj	= {};
 		this.terrorists = {};
+	}
 
+	buildNodes(origNodes)
+	{
 		for (let i = 0; i < origNodes.length; i++)
 		{
-			let classes = origNodes[i].codes;
+			let codes = origNodes[i].codes;
 			let column = origNodes[i].column;
 
-			for (let j = 0; j < classes.length; j++)
+			for (let j = 0; j < codes.length; j++)
 			{
-				this.nodes.push({"id": column + "_" + classes[j].name.replaceAll(" ", "_"),
-								 "name": classes[j].name});
+				this.nodes.push({"id": column + "_" + codes[j].name.replaceAll(" ", "_"),
+								 "name": codes[j].name});
 			}
 		}
 	}
@@ -82,7 +105,7 @@ class SankeyDiagram {
 			verifySrcTrgt(terrorist, id_target, id_weapon);
 		}
 
-		console.log(this.terrorists);
+		//console.log(this.terrorists);
 		genLinksArray();
 	}
 }
