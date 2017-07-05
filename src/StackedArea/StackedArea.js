@@ -23,11 +23,13 @@ class StackedArea{
       this.stack = d3.stack( );
 
       this.areaFocus = d3.area( )
+                    .curve(d3.curveCardinal)
                     .x((d) => {  return this.xFScale(d.data.date); })
                     .y0((d) => { return this.yFScale(d[0]); })
                     .y1((d) => { return this.yFScale(d[1]); });
 
       this.areaContext = d3.area( )
+                    .curve(d3.curveCardinal)
                     .x((d) => {  return this.xCScale(d.data.date); })
                     .y0((d) => { return this.yCScale(d[0]); })
                     .y1((d) => { return this.yCScale(d[1]); });
