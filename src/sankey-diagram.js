@@ -73,8 +73,8 @@ class SankeyDiagram {
 			for (let i = 0; i < keys.length; i++)
 			{
 				let key = keys[i];
-				//if (key === "Taliban")
-				this.links = this.links.concat(this.terrorists[key]);
+				if (key === "Taliban")
+					this.links = this.links.concat(this.terrorists[key]);
 			}			
 		}
 
