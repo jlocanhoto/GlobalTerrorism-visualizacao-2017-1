@@ -1,22 +1,23 @@
 class SankeyDiagram {
 	constructor(sankeyDef) {
-		var svg 		= d3.select("#sankey").append("svg")
+		this.svg 		= d3.select("#sankey").append("svg")
 							.attr("width", sankeyDef.size.width)
 							.attr("height", sankeyDef.size.height);
 
 		this.sankey 	= d3.sankey()
+							.nodeId((d) => d.id)
 							.nodeWidth(15)
 							.nodePadding(10)
-							.extent([1, 1], [sankeyDef.size.width - 1, sankeyDef.size.height - 6]);
+							.extent([[1, 1], [sankeyDef.size.width - 1, sankeyDef.size.height - 6]]);
 
-		this.link		= svg.append("g")
+		this.link		= this.svg.append("g")
 							 .attr("class", "links")
 							 .attr("fill", "none")
 							 .attr("stroke", "#000")
 							 .attr("stroke-opacity", 0.2)
 							 .selectAll("path");
 
-		this.node		= svg.append("g")
+		this.node		= this.svg.append("g")
 							 .attr("class", "nodes")
 							 .attr("font-family", "sans-serif")
 							 .attr("font-size", 10)
@@ -107,6 +108,49 @@ class SankeyDiagram {
 
 		//console.log(this.terrorists);
 		genLinksArray();
+	}
+
+	show() {
+		this.sankeyObj = {"nodes": this.nodes, "links": this.links};
+		this.sankey(this.sankeyObj);
+
+		this.link = this.link.data(this.sankeyObj.links)
+							 .enter()
+							 .append("path")
+							 .attr("d", d3.sankeyLinkHorizontal())
+							 .attr("stroke-width", (d) => {
+								 return Math.max(1, d.width);
+							 });
+
+		this.link.append("title")
+				 .text((d) => {
+				 	return d.source.name + " → " + d.target.name + "\n" + d.value.toString();
+				 });
+
+		this.node = this.node.data(this.sankeyObj.nodes)
+							 .enter()
+							 .append("g");
+
+		this.node.append("rect")
+				 .attr("x", function(d) { return d.x0; })
+				 .attr("y", function(d) { return d.y0; })
+				 .attr("height", function(d) { return d.y1 - d.y0; })
+				 .attr("width", function(d) { return d.x1 - d.x0; })
+				 .attr("fill", '#ae5a41')
+				 .attr("stroke", "#000");
+
+		this.node.append("text")
+				 .attr("x", function(d) { return d.x0 - 6; })
+				 .attr("y", function(d) { return (d.y1 + d.y0) / 2; })
+				 .attr("dy", "0.35em")
+				 .attr("text-anchor", "end")
+				 .text(function(d) { return d.name; })
+				 .filter((d) => { return d.x0 < +this.svg.attr("width") / 2; })
+				 .attr("x", function(d) { return d.x1 + 6; })
+				 .attr("text-anchor", "start");
+
+		this.node.append("title")
+				 .text(function(d) { return d.name + "\n" + d.value.toString(); });
 	}
 }
 
