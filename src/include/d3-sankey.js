@@ -1,7 +1,7 @@
 // https://github.com/d3/d3-sankey Version 0.7.1. Copyright 2017 Mike Bostock.
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('./d3-array.js'), require('./d3-collection.js'), require('./d3-shape.js')) :
-	typeof define === 'function' && define.amd ? define(['exports', './d3-array.js', './d3-collection.js', './d3-shape.js'], factory) :
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-array'), require('d3-collection'), require('d3-shape')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'd3-array', 'd3-collection', 'd3-shape'], factory) :
 	(factory((global.d3 = global.d3 || {}),global.d3,global.d3,global.d3));
 }(this, (function (exports,d3Array,d3Collection,d3Shape) { 'use strict';
 
