@@ -73,9 +73,6 @@ var groups = [
 var flagGit = false;
 
 $(document).ready(function() {
-	$('.page-footer').css({'background-color': '#7986cb'});
-	$('.nav-extended').css({'background-color': '#7986cb'});
-
 	$.each(groups, function (index, value) {
 		$('#groups').children('.row').append(`
 	<div class="col s12 m6 l4 xl3">
