@@ -2,13 +2,13 @@ const datasetURL = "https://raw.githubusercontent.com/jlocx/GlobalTerrorism-visu
 
 var body = d3.select("body");
 
-var spaceObj = {pos: {x: 0, y: 500}, size: {width: 1000, height: 80}, margin: {top: 10, bottom: 40, left: 20, right: 20} };
+var spaceObj = {pos: {x: 0, y: 0}, size: {width: 1000, height: 80}, margin: {top: 10, bottom: 40, left: 20, right: 20} };
 var rangeObj = {min: 1979, max: 2015};
 
 var timeline = new Timeline(spaceObj, rangeObj);
 timeline.add(body);
 
-var sankeyDef = {pos: {x: 0, y: 0}, size: {width: 960, height: 500}, margin: {top: 10, bottom: 10, left: 10, right: 10} };
+var sankeyDef = {pos: {x: 0, y: 0}, size: {width: 1330, height: 650}, margin: {top: 10, bottom: 10, left: 10, right: 10} };
 
 var sankeyDiagram = new SankeyDiagram(sankeyDef);
 

@@ -68,10 +68,12 @@ class SankeyDiagram {
 
 		var genLinksArray = () => {
 			let keys = Object.keys(this.terrorists);
+			console.log(keys)
 
 			for (let i = 0; i < keys.length; i++)
 			{
 				let key = keys[i];
+				//if (key === "Taliban")
 				this.links = this.links.concat(this.terrorists[key]);
 			}			
 		}
@@ -106,7 +108,6 @@ class SankeyDiagram {
 			verifySrcTrgt(terrorist, id_target, id_weapon);
 		}
 
-		//console.log(this.terrorists);
 		genLinksArray();
 	}
 
@@ -124,7 +125,7 @@ class SankeyDiagram {
 
 		this.link.append("title")
 				 .text((d) => {
-				 	return d.source.name + " → " + d.target.name + "\n" + d.value.toString();
+				 	return d.source.name + " → " + d.target.name + "\n" + d.value.toString() + " ataques";
 				 });
 
 		this.node = this.node.data(this.sankeyObj.nodes)
@@ -150,7 +151,7 @@ class SankeyDiagram {
 				 .attr("text-anchor", "start");
 
 		this.node.append("title")
-				 .text(function(d) { return d.name + "\n" + d.value.toString(); });
+				 .text(function(d) { return d.name + "\n" + d.value.toString() + " ataques"; });
 	}
 }
 
