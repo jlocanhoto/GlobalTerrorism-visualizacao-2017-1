@@ -67,14 +67,21 @@ class SankeyDiagram {
 		};
 
 		var genLinksArray = () => {
+			const THRESHOLD = 0;
 			let keys = Object.keys(this.terrorists);
-			console.log(keys)
+			//console.log(keys)
 
 			for (let i = 0; i < keys.length; i++)
 			{
 				let key = keys[i];
 				//if (key === "Taliban" || key === "Boko Haram")
-				this.links = this.links.concat(this.terrorists[key]);
+				for (let j = 0; j < this.terrorists[key].length; j++)
+				{
+					if (this.terrorists[key][j].value > THRESHOLD) {
+						this.links.push(this.terrorists[key][j]);
+					}
+				}
+				//this.links = this.links.concat(this.terrorists[key]);
 			}			
 		}
 
@@ -112,13 +119,42 @@ class SankeyDiagram {
 	}
 
 	show() {
+		var dy0, dy1;
+
+		function dragstarted(d) {
+			d3.select(this).raise().classed("active", true);
+			dy0 = d3.event.y - d.y0;
+			dy1 = d.y1 - d3.event.y;
+		}
+
+		function dragged(d) {
+			console.log(this)
+			console.log(d)
+			console.log(d3.event.y)
+			d3.select(this).select("text").attr("y", (d.y0 + d.y1)/2);
+			d3.select(this).select("rect").attr("y", (d) => {
+				d.y0 = d3.event.y - dy0;
+				d.y1 = d3.event.y + dy1;
+				return d.y0;
+			});
+		}
+
+		function dragended(d) {
+			d3.select(this).classed("active", false);
+		}
+
 		this.sankeyObj = {"nodes": this.nodes, "links": this.links};
 		this.sankey(this.sankeyObj);
 
 		this.link = this.link.data(this.sankeyObj.links)
 							 .enter()
 							 .append("path")
+							 .attr("class", "link")
 							 .attr("d", d3.sankeyLinkHorizontal())
+							 .attr("stroke", (d) => {
+							 	//console.log(d);
+							 	return "#81CFE0";
+							 })
 							 .attr("stroke-width", (d) => {
 								 return Math.max(1, d.width);
 							 });
@@ -128,16 +164,22 @@ class SankeyDiagram {
 				 	return d.source.name + " → " + d.target.name + "\n" + d.value.toString() + " ataques";
 				 });
 
+		var that = this;
+
 		this.node = this.node.data(this.sankeyObj.nodes)
 							 .enter()
-							 .append("g");
+							 .append("g")
+							 .attr("class", "node")
+							 .call(d3.drag()
+								 .on("start", dragstarted)
+								 .on("drag", dragged)
+								 .on("end", dragended));
 
 		this.node.append("rect")
 				 .attr("x", function(d) { return d.x0; })
 				 .attr("y", function(d) { return d.y0; })
 				 .attr("height", function(d) { return d.y1 - d.y0; })
 				 .attr("width", function(d) { return d.x1 - d.x0; })
-				 .attr("fill", '#ae5a41')
 				 .attr("stroke", "#000");
 
 		this.node.append("text")
