@@ -120,6 +120,7 @@ class SankeyDiagram {
 
 	show() {
 		var dy0, dy1;
+		var that = this;
 
 		function dragstarted(d) {
 			d3.select(this).raise().classed("active", true);
@@ -128,15 +129,15 @@ class SankeyDiagram {
 		}
 
 		function dragged(d) {
-			console.log(this)
-			console.log(d)
-			console.log(d3.event.y)
 			d3.select(this).select("text").attr("y", (d.y0 + d.y1)/2);
 			d3.select(this).select("rect").attr("y", (d) => {
 				d.y0 = d3.event.y - dy0;
 				d.y1 = d3.event.y + dy1;
 				return d.y0;
 			});
+
+			that.sankey.update(that.sankeyObj);
+			that.link.attr("d", d3.sankeyLinkHorizontal());
 		}
 
 		function dragended(d) {
@@ -163,8 +164,6 @@ class SankeyDiagram {
 				 .text((d) => {
 				 	return d.source.name + " → " + d.target.name + "\n" + d.value.toString() + " ataques";
 				 });
-
-		var that = this;
 
 		this.node = this.node.data(this.sankeyObj.nodes)
 							 .enter()
