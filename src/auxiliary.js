@@ -19,3 +19,15 @@ String.prototype.replaceAll = function(search, replacement) {
     
     return target.split(search).join(replacement);
 };
+
+function arrayInit(size, content)
+{
+    var arr = [];
+
+    for (let i = 0; i < size; i++)
+    {
+        arr.push(content);
+    }
+
+    return arr;
+}

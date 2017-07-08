@@ -21,7 +21,7 @@ var pDataset = new Promise((resolve, reject) => {
 });
 
 pDataset.then((dataset) => {
-	sankeyDiagram.buildNodes([attacktypeCodes, targettypeCodes, weapontypeCodes]);
 	sankeyDiagram.buildLinks(dataset);
+	sankeyDiagram.buildNodes([attacktypeCodes, targettypeCodes, weapontypeCodes]);
 	sankeyDiagram.show();
 });

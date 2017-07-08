@@ -7,7 +7,7 @@ class SankeyDiagram {
 		this.sankey 	= d3.sankey()
 							.nodeId((d) => d.id)
 							.nodeWidth(15)
-							.nodePadding(10)
+							.nodePadding(7)
 							.extent([[1, 1], [sankeyDef.size.width - 1, sankeyDef.size.height - 6]]);
 
 		this.link		= this.svg.append("g")
@@ -27,6 +27,10 @@ class SankeyDiagram {
 		this.nodes 		= [];
 		this.sankeyObj	= {};
 		this.terrorists = {};
+
+		this.activeAttack = [];
+		this.activeTarget = [];
+		this.activeWeapon = [];
 	}
 
 	buildNodes(origNodes)
@@ -35,11 +39,24 @@ class SankeyDiagram {
 		{
 			let codes = origNodes[i].codes;
 			let column = origNodes[i].column;
+			let activeNodes;
+
+			if (column === "attacktype1") {
+				activeNodes = this.activeAttack;
+			}
+			else if (column === "targtype1") {
+				activeNodes = this.activeTarget;
+			}
+			else if (column === "weaptype1") {
+				activeNodes = this.activeWeapon;
+			}
 
 			for (let j = 0; j < codes.length; j++)
 			{
-				this.nodes.push({"id": column + "_" + codes[j].name.replaceAll(" ", "_"),
+				if (activeNodes[j] === true) {
+					this.nodes.push({"id": column + "_" + codes[j].name.replaceAll(" ", "_"),
 								 "name": codes[j].name});
+				}
 			}
 		}
 	}
@@ -86,6 +103,10 @@ class SankeyDiagram {
 		}
 
 		// METHOD ITSELF
+		this.activeAttack = arrayInit(attacktypeCodes.codes.length, false);
+		this.activeTarget = arrayInit(targettypeCodes.codes.length, false);
+		this.activeWeapon = arrayInit(weapontypeCodes.codes.length, false);
+
 		for (let i = 0; i < data.length; i++)
 		{
 			let row = data[i];
@@ -113,6 +134,10 @@ class SankeyDiagram {
 			verifySrcTrgt(terrorist, terrorist_id, id_attack);
 			verifySrcTrgt(terrorist, id_attack, id_target);
 			verifySrcTrgt(terrorist, id_target, id_weapon);
+
+			this.activeAttack[attack_index] = true;
+			this.activeTarget[target_index] = true;
+			this.activeWeapon[weapon_index] = true;
 		}
 
 		genLinksArray();
