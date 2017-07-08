@@ -28,9 +28,35 @@ class SankeyDiagram {
 		this.sankeyObj	= {};
 		this.terrorists = {};
 
-		this.activeAttack = [];
-		this.activeTarget = [];
-		this.activeWeapon = [];
+		this.activeAttack;
+		this.activeTarget;
+		this.activeWeapon;
+
+		this.colors 	= [ '#b71c1c',
+							'#880e4f',
+							'#4a148c',
+							'#1a237e',
+							'#00bcd4',
+							'#1b5e20',
+							'#827717',
+							'#f57f17',
+							'#3e2723',
+							'#212121' ];
+
+		/*							
+		this.colors 	= [ '#880e4f',
+							'#880e4f',
+							'#880e4f',
+							'#880e4f',
+							'#880e4f',
+							'#880e4f',
+							'#880e4f',
+							'#880e4f',
+							'#880e4f',
+							'#880e4f' ];
+		*/
+
+		console.log(this.svg.style("height"))
 	}
 
 	buildNodes(origNodes)
@@ -41,14 +67,17 @@ class SankeyDiagram {
 			let column = origNodes[i].column;
 			let activeNodes;
 
-			if (column === "attacktype1") {
-				activeNodes = this.activeAttack;
-			}
-			else if (column === "targtype1") {
-				activeNodes = this.activeTarget;
-			}
-			else if (column === "weaptype1") {
-				activeNodes = this.activeWeapon;
+			switch(column)
+			{
+				case "attacktype1":
+					activeNodes = this.activeAttack;
+					break;
+				case "targtype1":
+					activeNodes = this.activeTarget;
+					break;
+				case "weaptype1":
+					activeNodes = this.activeWeapon;
+					break;
 			}
 
 			for (let j = 0; j < codes.length; j++)
@@ -78,7 +107,7 @@ class SankeyDiagram {
 			}
 
 			if (ret === false) {
-				let link = {"source": source, "target": target, "value": 1};
+				let link = {"source": source, "target": target, "value": 1, "color": '#000000'};
 				this.terrorists[terrorist].push(link);
 			}
 		};
@@ -95,6 +124,7 @@ class SankeyDiagram {
 				for (let j = 0; j < this.terrorists[key].length; j++)
 				{
 					if (this.terrorists[key][j].value > THRESHOLD) {
+						this.terrorists[key][j].color = this.colors[i];
 						this.links.push(this.terrorists[key][j]);
 					}
 				}
@@ -144,22 +174,26 @@ class SankeyDiagram {
 	}
 
 	show() {
-		var dy0, dy1;
+		var dy0, dy1, nodeHeight;
 		var that = this;
 
 		function dragstarted(d) {
 			d3.select(this).raise().classed("active", true);
+			nodeHeight = d.y1 - d.y0;
 			dy0 = d3.event.y - d.y0;
 			dy1 = d.y1 - d3.event.y;
 		}
 
 		function dragged(d) {
+			console.log(that.svg)
+			console.log(d3.event.y)
+			let svgHeight = parseInt(d3.select("#sankey").select("svg").style("height"));
+			d.y0 = Math.max(0, Math.min(d3.event.y - dy0, svgHeight - nodeHeight));
+			//d.y1 = d3.event.y + dy1;
+			d.y1 = d.y0 + nodeHeight;
+
 			d3.select(this).select("text").attr("y", (d.y0 + d.y1)/2);
-			d3.select(this).select("rect").attr("y", (d) => {
-				d.y0 = d3.event.y - dy0;
-				d.y1 = d3.event.y + dy1;
-				return d.y0;
-			});
+			d3.select(this).select("rect").attr("y", d.y0);
 
 			that.sankey.update(that.sankeyObj);
 			that.link.attr("d", d3.sankeyLinkHorizontal());
@@ -179,7 +213,7 @@ class SankeyDiagram {
 							 .attr("d", d3.sankeyLinkHorizontal())
 							 .attr("stroke", (d) => {
 							 	//console.log(d);
-							 	return "#81CFE0";
+							 	return d.color;
 							 })
 							 .attr("stroke-width", (d) => {
 								 return Math.max(1, d.width);

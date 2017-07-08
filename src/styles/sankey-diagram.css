@@ -16,7 +16,6 @@
 }
 .link {
 	fill            : none;
-	/*stroke          : #81CFE0;*/
 	stroke-opacity  : .2;
 }
 .link:hover {
