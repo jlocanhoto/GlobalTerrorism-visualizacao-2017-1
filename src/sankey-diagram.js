@@ -28,9 +28,9 @@ class SankeyDiagram {
 		this.sankeyObj	= {};
 		this.terrorists = {};
 
-		this.activeAttack;
-		this.activeTarget;
-		this.activeWeapon;
+		this.activeAttack = arrayInit(attacktypeCodes.codes.length, false);
+		this.activeTarget = arrayInit(targettypeCodes.codes.length, false);
+		this.activeWeapon = arrayInit(weapontypeCodes.codes.length, false);
 
 		this.colors 	= [ '#b71c1c',
 							'#880e4f',
@@ -42,21 +42,6 @@ class SankeyDiagram {
 							'#f57f17',
 							'#3e2723',
 							'#212121' ];
-
-		/*							
-		this.colors 	= [ '#880e4f',
-							'#880e4f',
-							'#880e4f',
-							'#880e4f',
-							'#880e4f',
-							'#880e4f',
-							'#880e4f',
-							'#880e4f',
-							'#880e4f',
-							'#880e4f' ];
-		*/
-
-		console.log(this.svg.style("height"))
 	}
 
 	buildNodes(origNodes)
@@ -84,7 +69,8 @@ class SankeyDiagram {
 			{
 				if (activeNodes[j] === true) {
 					this.nodes.push({"id": column + "_" + codes[j].name.replaceAll(" ", "_"),
-								 "name": codes[j].name});
+								 "name": codes[j].name,
+								 "color": ""});
 				}
 			}
 		}
@@ -107,7 +93,7 @@ class SankeyDiagram {
 			}
 
 			if (ret === false) {
-				let link = {"source": source, "target": target, "value": 1, "color": '#000000'};
+				let link = {"source": source, "target": target, "value": 1, "color": ''};
 				this.terrorists[terrorist].push(link);
 			}
 		};
@@ -133,10 +119,6 @@ class SankeyDiagram {
 		}
 
 		// METHOD ITSELF
-		this.activeAttack = arrayInit(attacktypeCodes.codes.length, false);
-		this.activeTarget = arrayInit(targettypeCodes.codes.length, false);
-		this.activeWeapon = arrayInit(weapontypeCodes.codes.length, false);
-
 		for (let i = 0; i < data.length; i++)
 		{
 			let row = data[i];
@@ -181,15 +163,11 @@ class SankeyDiagram {
 			d3.select(this).raise().classed("active", true);
 			nodeHeight = d.y1 - d.y0;
 			dy0 = d3.event.y - d.y0;
-			dy1 = d.y1 - d3.event.y;
 		}
 
 		function dragged(d) {
-			console.log(that.svg)
-			console.log(d3.event.y)
 			let svgHeight = parseInt(d3.select("#sankey").select("svg").style("height"));
 			d.y0 = Math.max(0, Math.min(d3.event.y - dy0, svgHeight - nodeHeight));
-			//d.y1 = d3.event.y + dy1;
 			d.y1 = d.y0 + nodeHeight;
 
 			d3.select(this).select("text").attr("y", (d.y0 + d.y1)/2);
@@ -212,7 +190,6 @@ class SankeyDiagram {
 							 .attr("class", "link")
 							 .attr("d", d3.sankeyLinkHorizontal())
 							 .attr("stroke", (d) => {
-							 	//console.log(d);
 							 	return d.color;
 							 })
 							 .attr("stroke-width", (d) => {
@@ -254,43 +231,3 @@ class SankeyDiagram {
 				 .text(function(d) { return d.name + "\n" + d.value.toString() + " ataques"; });
 	}
 }
-
-/*
-var colors = {
-        'environment':         '#edbd00',
-        'social':              '#367d85',
-        'animals':             '#97ba4c',
-        'health':              '#f5662b',
-        'research_ingredient': '#3f3e47',
-        'fallback':            '#9f9fa3'
-      };
-  d3.json("product.json", function(error, json) {
-    var chart = d3.select("#sankey").append("svg").chart("Sankey.Path");
-    chart
-      .name(label)
-      .colorNodes(function(name, node) {
-        return color(node, 1) || colors.fallback;
-      })
-      .colorLinks(function(link) {
-        return color(link.source, 4) || color(link.target, 1) || colors.fallback;
-      })
-      .nodeWidth(15)
-      .nodePadding(10)
-      .spread(true)
-      .iterations(0)
-      .draw(json);
-    function label(node) {
-      return node.name.replace(/\s*\(.*?\)$/, '');
-    }
-    function color(node, depth) {
-      var id = node.id.replace(/(_score)?(_\d+)?$/, '');
-      if (colors[id]) {
-        return colors[id];
-      } else if (depth > 0 && node.targetLinks && node.targetLinks.length == 1) {
-        return color(node.targetLinks[0].source, depth-1);
-      } else {
-        return null;
-      }
-    }
-  });
-  */
