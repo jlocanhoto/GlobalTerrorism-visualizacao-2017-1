@@ -1,47 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        
-        <script src="include/d3.v4.min.js"></script>
-        <script src="include/d3-sankey.min.js"></script>
+		<meta content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="include/css/timeline/timeline.css">
 
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
-              integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
-              crossorigin=""/>
-        <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
-            integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
-            crossorigin=""></script>
-        <!-- <script src="leaflet-heat.js"></script> -->
-        <script src="resources/attacktypeCodes.json"></script>
-        <script src="resources/targettypeCodes.json"></script>
-        <script src="resources/weapontypeCodes.json"></script>
-        <script src="resources/countryCodes.json"></script>
+    <link rel="stylesheet" type="text/css" href="include/css/sankey/sankey.css">
 
-        <script src="auxiliary.js"></script>
-        <script src="timeline.js"></script>
-        <script src="sankey-diagram.js"></script>
+		<link rel="stylesheet" type="text/css" href="include/css/stackedarea/stackedarea.css">
 
-        <link rel="stylesheet" type="text/css" href="styles/timeline.css">
-        <link rel="stylesheet" type="text/css" href="styles/sankey-diagram.css">
-    	<title>Global Terrorism</title>
+		<link rel="stylesheet" type="text/css" href="include/css/timeline/timeline.css">
+
+		<link rel="stylesheet" type="text/css" href="include/css/buttons/hint.css">
+		<link rel="stylesheet" type="text/css" href="include/css/buttons/buttons.css">
+
+		<title>Global Terrorism</title>
 	</head>
 	<body>
-        <div id="map"></div>
-        <div id="sankey"></div>
-        <!--
-        <script type="text/javascript" src="map.js"></script>
-	   	<script type="text/javascript">
-    
-          var dimensions = {width: 1000, height: 500};
-          var position = {x: 0, y: 0};
-          var map = new Map(dimensions, position, "map");
-    
-          map.show([34.575503, 69.240073], 6);
-	   		map.heatmap("Taliban");
-    
-	   	</script>
-        -->
-        <script src="main.js"></script>
+				<script src="include/javascript/d3.v4.min.js"></script>
+				<script src="include/javascript/auxiliary.js"></script>
+				<script src="include/javascript/capitals.js"></script>
+				<script src="include/javascript/gnames.js"></script>
+
+				<script src="include/javascript/map/Map.js"></script>
+				<script src="include/javascript/map/leaflet-heat.js"></script>
+				<script src="include/javascript/map/palette.js"></script>
+
+				<script src="include/javascript/sankey/d3-sankey.min.js"></script>
+				<script src="include/javascript/sankey/Sankey.js"></script>
+
+				<script src="include/javascript/buttons/Buttons.js"></script>
+
+				<script src="include/javascript/stackedarea/StackedArea.js"></script>
+
+				<script src="include/javascript/timeline/Timeline.js"></script>
+
+				<script src="resources/attacktypeCodes.json"></script>
+				<script src="resources/targettypeCodes.json"></script>
+				<script src="resources/weapontypeCodes.json"></script>
+				<script src="resources/countryCodes.json"></script>
+
+				<script src="main.js"></script>
+
+				<div id="map"></div>
+				<div id="sankey"></div>
 	</body>
 </html>
