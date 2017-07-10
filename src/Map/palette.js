@@ -1,4 +1,4 @@
-var const palette = [{
+var palette = [{
     "0.0": "#ffffd9",
     "0.15": "#edf8b1",
     "0.3": "#c7e9b4",
