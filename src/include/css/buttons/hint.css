@@ -11,7 +11,7 @@ html {
 }
 
 body {
-  margin: 64px auto;
+  /*margin: 64px auto;*/
   text-align: center;
   font-size: 100%;
   max-width: 640px;
