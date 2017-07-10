@@ -10,9 +10,7 @@ timeline.add(body);
 
 var sankeyDef = {pos: {x: 0, y: 0}, size: {width: 1330, height: 650}, margin: {top: 10, bottom: 10, left: 10, right: 10} };
 
-var sankeyDiagram = new SankeyDiagram(sankeyDef);
-
-//var concentricRadviz = new ConcentricRadviz([1,2,3,4,5], [attacktypeCodes, targettypeCodes, weapontypeCodes]);
+//var sankeyDiagram = new SankeyDiagram(sankeyDef);
 
 var pDataset = new Promise((resolve, reject) => {
 	d3.csv(datasetURL, function(d) {
@@ -21,7 +19,7 @@ var pDataset = new Promise((resolve, reject) => {
 });
 
 pDataset.then((dataset) => {
-	sankeyDiagram.buildLinks(dataset);
+	/*sankeyDiagram.buildLinks(dataset);
 	sankeyDiagram.buildNodes([attacktypeCodes, targettypeCodes, weapontypeCodes]);
-	sankeyDiagram.show();
+	sankeyDiagram.show();*/
 });
