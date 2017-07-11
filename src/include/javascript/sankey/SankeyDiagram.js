@@ -74,194 +74,49 @@ class SankeyDiagram {
 
 		// PRIVATE FUNCTIONS
 		var makeLink = (terrorist, source, target, color) => {
-			let ret = false;
+			var flagPresent = false;
+			links.map((l) => {
+				if ((l.source === source) && (l.target === target) && (l.color === color)) {
+					l.value++;
+					flagPresent |= true;
+				}
+			});
 
-			if (links[terrorist] === undefined) {
-				links[terrorist] = [];
-			}
-			if (links[terrorist][source] === undefined) {
-				links[terrorist][source] = [];
-			}
-			if (links[terrorist][source][target] === undefined) {
-				links[terrorist][source][target] = {"value": 1, "color": color};
-			}
-			else {
-				links[terrorist][source][target].value++;
+			if (!flagPresent) {
+				let link = {"source": source, "target": target, "value": 1, "color": color};
+				links.push(link);
 			}
 		}
 
 		var verifySrcTrgt = () => {
-			//console.log(this.completeLinks);
 			let terrorists = Object.keys(this.completeLinks);
-			
+			let source, target;
+
 			for (let i = 0; i < terrorists.length; i++)
 			{
-				let terroristLinks = this.completeLinks[terrorists[i]];
-				let attacks = {"arr": [], "qty": [], "pass": []};
-				let targets = {"arr": [], "qty": [], "pass": []};
-				let weapons = {"arr": [], "qty": [], "pass": []};
-
-				for (let j = 0; j < terroristLinks.length; j++)
+				let terrorist = terrorists[i];
+				let linksTerrorist = this.completeLinks[terrorist];
+				
+				for (let j = 0; j < linksTerrorist.length; j++)
 				{
-					let attack = terroristLinks[j][ATTACK];
-					if (attacks.arr.pushIfNotExists(attack)) {
-						attacks.qty[attack] = 1;
-						attacks.pass[attack] = false;
-					}
-					else {
-						attacks.qty[attack]++;
-					}
-					if (attacks.pass[attack] === false && attacks.qty[attack] > THRESHOLD) {
-						attacks.pass[attack] = true;
-					}
-					
-					let target = terroristLinks[j][TARGET];
-					if (targets.arr.pushIfNotExists(target)) {
-						targets.qty[target] = 1;
-						targets.pass[target] = false;
-					}
-					else {
-						targets.qty[target]++;
-					}
-					if (targets.pass[target] === false && targets.qty[target] > THRESHOLD) {
-						targets.pass[target] = true;
-					}
+					source = terrorist;
+					target = linksTerrorist[j][ATTACK];
+					makeLink(terrorist, source, target, this.colors[i]);
 
-					let weapon = terroristLinks[j][WEAPON];
-					if (weapons.arr.pushIfNotExists(weapon)) {
-						weapons.qty[weapon] = 1;
-						weapons.pass[weapon] = false;
-					}
-					else {
-						weapons.qty[weapon]++;
-					}
-					if (weapons.pass[weapon] === false && weapons.qty[weapon] > THRESHOLD) {
-						weapons.pass[weapon] = true;
-					}
-				}
+					source = target;
+					target = linksTerrorist[j][TARGET];
+					makeLink(terrorist, source, target, this.colors[i]);
 
-				terroristAttacks[terrorists[i]] = attacks;
-				terroristTargets[terrorists[i]] = targets;
-				terroristWeapons[terrorists[i]] = weapons;
-
-				this.selectedLinks[terrorists[i]] = [];
-
-				for (let j = 0; j < terroristLinks.length; j++)
-				{
-					let attack = terroristLinks[j][ATTACK];
-					let target = terroristLinks[j][TARGET];
-					let weapon = terroristLinks[j][WEAPON];
-					
-					if (attacks.pass[attack] && targets.pass[target] && weapons.pass[weapon]) {
-						this.selectedLinks[terrorists[i]].push(terroristLinks[j]);
-					}
+					source = target;
+					target = linksTerrorist[j][WEAPON];
+					makeLink(terrorist, source, target, this.colors[i]);		
 				}
 			}
-			
-			
-			//let terrorists = this.completeLinks
-			
-			let obj = this.terrorists[terrorist];
-			let ret = false;
-
-			for (let i = 0; (i < obj.length) && (ret === false); i++)
-			{
-				if ((obj[i].source === source) && (obj[i].target === target)) {
-					this.terrorists[terrorist][i].value++;
-					ret = true;
-				}
-			}
-
-			if (ret === false) {
-				let link = {"source": source, "target": target, "value": 1, "color": '', "class": ""};
-				this.terrorists[terrorist].push(link);
-			}
-			
 		};
 
 		var generateLinksArray = () => {
-			let terrorists = Object.keys(this.completeLinks);
-			let terrorLinks = [];
-
-			for (let i = 0; i < terrorists.length; i++)
-			{
-				let selLinks = this.completeLinks[terrorists[i]];
-				let source;
-				let target;
-
-				for (let j = 0; j < selLinks.length; j++)
-				{
-					source = terrorists[i];
-					target = selLinks[j][ATTACK];
-					makeLink(terrorists[i], source, target, this.colors[i]);
-
-					source = target;
-					target = selLinks[j][TARGET];
-					makeLink(terrorists[i], source, target, this.colors[i]);
-
-					source = target;
-					target = selLinks[j][WEAPON];
-					makeLink(terrorists[i], source, target, this.colors[i]);
-				}
-			}
-
-			console.log(links)
-
-			for (let t = 0; t < terrorists.length; t++)
-			{
-				let sources = Object.keys(links[terrorists[t]]);
-				for (let i = 0; i < sources.length; i++)
-				{
-					let source = sources[i];
-					let targets = Object.keys(links[terrorists[t]][source]);
-
-					for (let j = 0; j < targets.length; j++)
-					{
-						let target = targets[j];
-
-						if (links[terrorists[t]][source][target].value > THRESHOLD)
-							this.links.push({
-								"source": source,
-								"target": target,
-								"value": links[terrorists[t]][source][target].value,
-								"color": links[terrorists[t]][source][target].color,
-								"class": ""
-							});
-					}
-				}
-			}
-
+			this.links = JSON.parse(JSON.stringify(links));
 			console.log(this.links)
-
-			//console.log(keys)
-			/*
-			for (let i = 0; i < keys.length; i++)
-			{
-				let key = keys[i];
-				//if (key === "Taliban" || key === "Boko Haram")
-				for (let j = 0; j < this.terrorists[key].length; j++)
-				{
-					if (this.terrorists[key][j].value < THRESHOLD) {
-						this.terrorists[key][j].source
-						reduceValue++;
-						/*
-						this.terrorists[key][j].color = this.colors[i];
-						this.links.push(this.terrorists[key][j]);
-						console.log(this.terrorists[key][j])
-						*//*
-					}
-				}
-
-				this.terrorists[key].map((t) => {
-					t.value -= reduceValue;
-					if (t.value > 0) {
-						t.color = this.colors[i];
-						this.links.push(t);
-					}
-					//console.log(t);
-				})
-				//this.links = this.links.concat(this.terrorists[key]);
-			}*/
 		};
 
 		// METHOD ITSELF
@@ -291,9 +146,9 @@ class SankeyDiagram {
 			this.completeLinks[id_terrorist].push([id_attack, id_target, id_weapon]);
 
 			this.activeNodes[id_terrorist]	= true;
-			this.activeNodes[id_attack] 	= true;
-			this.activeNodes[id_target] 	= true;
-			this.activeNodes[id_weapon] 	= true;
+			this.activeNodes[id_attack]		= true;
+			this.activeNodes[id_target]		= true;
+			this.activeNodes[id_weapon]		= true;
 		}
 
 		verifySrcTrgt();
