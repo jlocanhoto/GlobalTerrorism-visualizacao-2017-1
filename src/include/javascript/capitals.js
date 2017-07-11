@@ -8,5 +8,6 @@ var capitals = {
     "New People's Army (NPA)": [14.599512, 120.98422],
     "Al-Shabaab": [2.046934, 45.318162],
     "Basque Fatherland and Freedom (ETA)": [42.8499800, -2.6726800],
-    "Boko Haram": [9.076479, 7.398574]
+    "Boko Haram": [9.076479, 7.398574],
+    "null": [0, 0]
 };

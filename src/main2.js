@@ -1,25 +1,178 @@
-const datasetURL = "https://raw.githubusercontent.com/jlocx/GlobalTerrorism-visualizacao-2017-1/master/datasets/selectedGTD.csv";
+class Main{
+    constructor(dimensions, selected_gtd){
+        this.b_dimension = dimensions.buttons;
+        this.s_dimension = dimensions.stacked;
+        this.m_dimension = dimensions.map;
 
-var body = d3.select("body");
+        this.selected_gtd = selected_gtd;
+    }
 
-var spaceObj = {pos: {x: 0, y: 0}, size: {width: 1000, height: 80}, margin: {top: 10, bottom: 40, left: 20, right: 20} };
-var rangeObj = {min: 1979, max: 2015};
+    show( ){
+        this._buttons( );
+        this._stacked( );
+        this._map( );
 
-var timeline = new Timeline(spaceObj, rangeObj);
-timeline.add(body);
+    }
 
-var sankeyDef = {pos: {x: 0, y: 0}, size: {width: 1330, height: 650}, margin: {top: 10, bottom: 10, left: 10, right: 10} };
+    _buttons( ){
+        var handler = {
+            set: (t, p, v) => {
+                t[p] = v;
 
-//var sankeyDiagram = new SankeyDiagram(sankeyDef);
+                this.selected = t;
+                this.__select( );
 
-var pDataset = new Promise((resolve, reject) => {
-	d3.csv(datasetURL, function(d) {
-		resolve(d);
-	});
-});
+                return true;
+            }
+        };
 
-pDataset.then((dataset) => {
-	/*sankeyDiagram.buildLinks(dataset);
-	sankeyDiagram.buildNodes([attacktypeCodes, targettypeCodes, weapontypeCodes]);
-	sankeyDiagram.show();*/
-});
+        var stack = new Proxy([ ], handler);
+        var chosen = 2;
+
+        this.b_dimension.p = this.__ratio( );
+
+        var buttons = new Buttons(this.b_dimension, "../flags/", stack, chosen);
+        buttons.show( );
+    }
+
+    _stacked( ){
+        var stacked_div = d3.select("#stacked")
+                            .style("top", this.s_dimension.y + "px")
+                            .style("left", this.s_dimension.x + "px")
+                            .style("width", this.s_dimension.width + "px")
+                            .style("height", this.s_dimension.height + "px")
+                            .style("position", "relative");
+
+        var svg = stacked_div.append("svg")
+                             .attr("width", this.s_dimension.width)
+                             .attr("height", this.s_dimension.height)
+                             .style("align-items", "left");
+
+        var dimension = {width: this.s_dimension.width, height: this.s_dimension.height};
+
+        this.stacked = new StackedArea(dimension, svg);
+
+    }
+
+    _map( ){
+        this.map = new Map(this.m_dimension, 2);
+        console.log(capitals["null"])
+        this.map.show(capitals["null"], 2, true);
+
+    }
+
+    __select(selected){
+        d3.csv(this.selected_gtd, (data) => {
+            var stacked = this.__convert_stacked(data);
+            var heatmap = this.__convert_heatmap(data);
+
+            this.stacked.show(stacked, this.selected);
+
+            this.map.show(this.__capital( ), 6, false);
+            this.map.heatmap(heatmap);
+
+        });
+    }
+
+    __convert_stacked(data){
+        var before = new Array(this.selected.length).fill(0);
+        var unique = [ ];
+
+        data = data.filter((d) => {
+            return this.selected.indexOf(d.gname) > -1 && +d.nkill >= 0;
+
+        });
+
+        for(var i = 0; i < data.length; i++){
+            var sum = +data[i].nkill;
+            var current_date = new Date(+data[i].iyear, +data[i].imonth - 1, +data[i].iday);
+
+            for(var x = i + 1; x < data.length; x++){
+                var post_date = new Date(+data[x].iyear, +data[x].imonth - 1, +data[x].iday);
+
+                if(current_date.getTime( ) == post_date.getTime( )){
+                    sum = sum + (+data[x].nkill);
+
+                }
+                else{
+                    unique.push({gname: data[x].gname, date: current_date, nkill: sum});
+                    i = x;
+                    break;
+
+                }
+
+            }
+        }
+
+        unique = unique.map((d) => {
+            var g = { }
+            g.date = d.date;
+
+            this.selected.forEach((s, i) => {
+
+                if(d.gname == s)
+                    g[s] = d.nkill + before[i];
+                else
+                    g[s] = before[i];
+
+                before[i] = g[s];
+            });
+
+            return g;
+        });
+
+        return unique;
+
+    }
+
+    __convert_heatmap(data){
+        var heatmaps = [ ];
+        var scales = [ ];
+
+        this.selected.forEach((s) => {
+            var deaths = [ ];
+
+            data.forEach((d) => {
+                if(d.gname == s)
+                    deaths.push(+d.nkill);
+
+            });
+
+            var dScale = d3.scaleLinear( ).range([0., 1.]);
+            var extent = d3.extent(deaths);
+
+            dScale.domain(extent);
+
+            scales.push(dScale);
+
+        });
+
+        this.selected.forEach((s, i) => {
+            var heatmap = [ ];
+
+            data.forEach((d) => {
+                if(+d.latitude != 0 && (+d.longitude) != 0 && d.gname == s)
+                    heatmap.push([+d.latitude, +d.longitude, scales[i](+d.nkill)]);
+
+            });
+
+            heatmaps.push(heatmap);
+        });
+
+        return heatmaps;
+    }
+
+    __capital( ){
+        var group = null;
+
+        if(this.selected.length > 0)
+            group = this.selected[0];
+
+        return capitals[group];
+
+    }
+
+    __ratio( ){
+        return ((window.outerWidth - (2 * this.b_dimension.x)) - 10 * (2 * this.b_dimension.r)) / 9;
+    }
+}

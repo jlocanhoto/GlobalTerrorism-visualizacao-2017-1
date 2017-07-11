@@ -6,7 +6,7 @@ class StackedArea{
               top: 20, right: 20, bottom: 110, left: 40
           },
           context: {
-              top: 430, right: 20, bottom: 30, left: 40
+              top: 230, right: 20, bottom: 30, left: 40
           }
       };
 
@@ -39,30 +39,30 @@ class StackedArea{
       this.container.append("g")
                     .attr("id", "yFocus")
                     .attr("class", "yAxis")
-                    .attr("transform", "translate(" + (margin.focus.left + dimensions.x - 1) + "," +
-                                                      (margin.focus.top + dimensions.y) + ")");
+                    .attr("transform", "translate(" + (margin.focus.left - 1) + "," +
+                                                       margin.focus.top + ")");
 
       this.container.append("g")
                     .attr("id", "xFocus")
                     .attr("class", "xAxis")
-                    .attr("transform", "translate(" + (margin.focus.left + dimensions.x - 1)+ "," +
-                                                      (heightFocus + margin.focus.top + dimensions.y) + ")");
+                    .attr("transform", "translate(" + (margin.focus.left - 1) + "," +
+                                                      (heightFocus + margin.focus.top) + ")");
 
       this.container.append("g")
                     .attr("id", "xContext")
                     .attr("class", "xAxis")
-                    .attr("transform", "translate(" + (margin.context.left + dimensions.x - 1)+ "," +
-                                                      (heightContext + margin.context.top + dimensions.y) + ")");
+                    .attr("transform", "translate(" + (margin.context.left - 1) + "," +
+                                                      (heightContext + margin.context.top) + ")");
 
       this.focus = this.container.append("g")
                                  .attr("class", "focus")
-                                 .attr("transform", "translate(" + (margin.focus.left + dimensions.x) + "," +
-                                                                   (margin.focus.top + dimensions.y) + ")");
+                                 .attr("transform", "translate(" + margin.focus.left + "," +
+                                                                   margin.focus.top + ")");
 
       this.context = this.container.append("g")
                                    .attr("class", "context")
-                                   .attr("transform", "translate(" + (margin.context.left + dimensions.x) + "," +
-                                                                     (margin.context.top + dimensions.y) + ")");
+                                   .attr("transform", "translate(" + margin.context.left + "," +
+                                                                     margin.context.top + ")");
 
       this.focus.append("rect")
                 .attr("class", "zoom")
@@ -89,10 +89,7 @@ class StackedArea{
 
   }
 
-  show(data){
-      var keys = data.columns.slice(1);
-      var data = this._fix(data);
-
+  show(data, keys){
       this.stack.keys(keys);
 
       var layerFocus = this.focus.selectAll(".layer")
@@ -113,29 +110,44 @@ class StackedArea{
       layerFocus.enter( )
                 .append("g")
                 .merge(layerFocus)
-                .attr("class", "layer");
+                .attr("class", "layer")
+                .append("path");
 
       layerContext.enter( )
                   .append("g")
                   .merge(layerContext)
-                  .attr("class", "layer");
+                  .attr("class", "layer")
+                  .append("path");
 
-      this.focus.selectAll(".layer")
-                .append("path")
-                .attr("class", "area")
-                .attr("fill", (d) => { return this.cScale(d.key); })
-                .attr("d", this.areaFocus);
+      var fSelection = this.focus.selectAll("path");
+      var cSelection = this.context.selectAll("path");
 
-      this.context.selectAll(".layer")
-                  .append("path")
-                  .attr("class", "area")
-                  .attr("fill", (d) => { return this.cScale(d.key); })
-                  .attr("d", this.areaContext);
+      if(fSelection.empty( ))
+          this.focus.selectAll("path")
+                    .attr("class", "area")
+                    .attr("fill", (d) => { return this.cScale(d.key); })
+                    .attr("d", this.areaFocus);
+      else
+          this.focus.selectAll(".layer")
+                    .select("path")
+                    .attr("fill", (d) => { return this.cScale(d.key); })
+                    .attr("d", this.areaFocus);
 
-      this.xAxisFocus = d3.axisBottom(this.xFScale).ticks(d3.timeDay);
+      if(cSelection.empty( ))
+          this.context.selectAll("path")
+                      .attr("class", "area")
+                      .attr("fill", (d) => { return this.cScale(d.key); })
+                      .attr("d", this.areaContext);
+      else
+          this.context.selectAll(".layer")
+                      .select("path")
+                      .attr("fill", (d) => { return this.cScale(d.key); })
+                      .attr("d", this.areaContext);
+
+      this.xAxisFocus = d3.axisBottom(this.xFScale).ticks(d3.timeYear.every(5));
       this.yAxisFocus = d3.axisLeft(this.yFScale);
 
-      this.xAxisContext = d3.axisBottom(this.xCScale).ticks(d3.timeDay);
+      this.xAxisContext = d3.axisBottom(this.xCScale).ticks(d3.timeYear.every(5));
 
       this.container.select("#xFocus").call(this.xAxisFocus);
       this.container.select("#yFocus").call(this.yAxisFocus);
@@ -177,20 +189,6 @@ class StackedArea{
       this.container.select("#xFocus").call(this.xAxisFocus);
       this.context.select(".brush").call(this.brush.move, this.xFScale.range( ).map(t.invertX, t));
 
-  }
-
-  _fix(data){
-      var columns = data.columns;
-
-      data.forEach((d) => {
-          d.date = this.timeParser(d.date);
-
-          for(var i = 1, n = columns.length; i < n; ++i){
-              d[columns[i]] = +d[columns[i]];
-          }
-      });
-
-      return data;
   }
 
   _max(data){
