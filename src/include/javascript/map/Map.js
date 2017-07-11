@@ -1,55 +1,56 @@
 class Map{
-    constructor(dimensions, position, id, heat_count){
-        this.map = L.map(id);
+    constructor(dimension, size){
+        this.size = size;
+        this.map = L.map("map");
 
         this.tileLayer = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoibmlsc29ubGltYSIsImEiOiJjajR2bGNpZmgwd2N1MzJtYzZkaTdzYWxsIn0.QHRt44knAkyu-FkZLgR7tQ', {
                                       maxZoom: 18,
-                                      mapId: id
+                                      mapId: "map"
                          });
-
-        this.heat_count = heat_count;
-
-        d3.select("body").select("#" + id).style("width", dimensions.width + "px");
-        d3.select("body").select("#" + id).style("height", dimensions.height + "px");
-        d3.select("body").select("#" + id).style("top", position.y + "px");
-        d3.select("body").select("#" + id).style("left", position.x + "px");
-
-    }
-
-    show(latlong, zoom){
-        var slice = palette.slice(0, this.heat_count);
-
-        this.map.setView(latlong, zoom);
-        this.tileLayer.addTo(this.map);
 
         this.heatLayers = [ ];
 
-        slice.forEach((s, i) => {
-            var h = L.heatLayer([ ], {
-                        "radius": 15,
-                        "blur": 10,
-                        "maxZoom": 6,
-                        "gradient": s,
-                    });
-
-            h.addTo(this.map);
-            this.heatLayers.push(h);
-        });
+        d3.select("#map").style("width", dimension.width + "px");
+        d3.select("#map").style("height", dimension.height + "px");
+        d3.select("#map").style("top", dimension.y + "px");
+        d3.select("#map").style("left", dimension.x + "px")
+        d3.select("#map").style("position", "absolute");
 
     }
 
-    heatmap(point, index){
-        var h = this.heatLayers[index];
-        var p = [ ];
+    show(latlng, zoom, first){
+        var slice = palette.slice(0, this.size);
 
-        if(point.length > 0){
-            p = point;
+        this.map.setView(latlng, zoom);
+        this.tileLayer.addTo(this.map);
+
+        this.heat = Array.apply(null, Array(this.size)).map(function( ){ return [ ]; });
+
+        if(first){
+            this.heat.forEach((h, i) => {
+                this.heatLayers.push(
+                                    L.heatLayer([ ], {
+                                        "radius": 15,
+                                        "blur": 10,
+                                        "maxZoom": 6,
+                                        "gradient": slice[i],
+                              }).addTo(this.map));
+            });
+
         }
 
-        p.forEach(function(d){
-            h.addLatLng(d);
+    }
+
+    heatmap(heat){
+        heat.forEach((h, i) => {
+            this.heat[i] = h;
+            this.map.removeLayer(this.heatLayers[i]);
         });
 
+        this.heat.forEach((h, i) => {
+            this.heatLayers[i].setLatLngs(h);
+            this.heatLayers[i].addTo(this.map);
+        });
     }
 
 }
