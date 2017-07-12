@@ -3,7 +3,7 @@
 	<head>
 		<meta content="text/html; charset=UTF-8"/>
     <!-- <link rel="stylesheet" type="text/css" href="include/css/timeline/timeline.css"/> -->
-
+    
     <link rel="stylesheet" type="text/css" href="include/css/sankey/sankey.css"/>
 
 		<link rel="stylesheet" type="text/css" href="include/css/stackedarea/stackedarea.css"/>
@@ -24,32 +24,34 @@
 		<title>Global Terrorism</title>
 	</head>
 	<body>
-				<div id="map"></div>
-				<div id="buttons"></div>
-				<div id="stacked"></div>
-				<div id="sankey"></div>
+				<div style="position: relative;">
+					<div id="map"></div>
+					<div id="buttons"></div>
+					<div id="stacked"></div>
+					<div id="sankey" style="position: absolute;"></div>
+				</div>
 
 				<script src="include/javascript/d3.v4.min.js"></script>
 				<script src="include/javascript/auxiliary.js"></script>
 				<script src="include/javascript/capitals.js"></script>
 				<script src="include/javascript/gnames.js"></script>
 
-        <script src="include/javascript/map/palette.js"></script>
-        <script src="include/javascript/map/leaflet-heat.js"></script>
+        		<script src="include/javascript/map/palette.js"></script>
+        		<script src="include/javascript/map/leaflet-heat.js"></script>
 				<script src="include/javascript/map/Map.js"></script>
-
+				
 				<script src="include/javascript/sankey/d3-sankey.min.js"></script>
-        <script src="include/javascript/sankey/SankeyDiagram.js"></script>
+        		<script src="include/javascript/sankey/SankeyDiagram.js"></script>
 
 				<script src="include/javascript/buttons/Buttons.js"></script>
 
 				<script src="include/javascript/stackedarea/StackedArea.js"></script>
-
+				<!--
 				<script src="include/javascript/timeline/Timeline.js"></script>
-
+				-->
 				<!-- <script src="main.js"></script> -->
-        <script src="main2.js"></script>
-
+        		<script src="main2.js"></script>
+        		
 				<script type="text/javascript">
 
 						var dimensions = {
@@ -69,15 +71,26 @@
 										y: 60,
 										width: 600,
 										height: 300
+								},
+								sankey: {
+									x: 610,
+									y: 60,
+									width: 600,
+									height: 600,
+									def: {
+										pos: {x: 0, y: 0}, 
+										size: {width: 600, height: 600},
+										margin: {top: 10, bottom: 10, left: 10, right: 10}
+									}
 								}
 						};
 
-						var selectedGTD = "../datasets/selectedGTD.csv";
+						//var selectedGTD = "../datasets/selectedGTD.csv";
+						const datasetURL = "https://raw.githubusercontent.com/jlocx/GlobalTerrorism-visualizacao-2017-1/master/datasets/selectedGTD.csv";
 
-						var main = new Main(dimensions, selectedGTD);
+						var main = new Main(dimensions, datasetURL);
 						main.show( );
 
 				</script>
-
 	</body>
 </html>

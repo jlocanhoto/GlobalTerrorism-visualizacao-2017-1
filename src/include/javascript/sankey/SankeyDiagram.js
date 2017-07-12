@@ -1,14 +1,17 @@
 class SankeyDiagram {
-	constructor(sankeyDef) {
-		this.svg 			= d3.select("#sankey").append("svg")
-								.attr("width", sankeyDef.size.width)
-								.attr("height", sankeyDef.size.height);
+	constructor(sankeyDef, container) {
+		const _width 		= sankeyDef.size.width - (sankeyDef.margin.left + sankeyDef.margin.right);
+		const _height 		= sankeyDef.size.height - (sankeyDef.margin.top + sankeyDef.margin.bottom);
+
+		this.svg 			= container.append("svg")
+								.attr("width", _width)
+								.attr("height", _height);
 
 		this.sankey 		= d3.sankey()
 								.nodeId((d) => d.id)
 								.nodeWidth(15)
 								.nodePadding(7)
-								.extent([[1, 1], [sankeyDef.size.width - 1, sankeyDef.size.height - 6]]);
+								.extent([[1, 1], [_width - 1, _height - 6]]);
 
 		this.link			= this.svg.append("g")
 								  .attr("class", "links")
@@ -27,8 +30,14 @@ class SankeyDiagram {
 		this.selectedLinks	= [];
 		this.links			= [];
 		this.nodes 			= [];
+		this._links			= [];
 		this.sankeyObj		= {};
 		this.terrorists		= {};
+
+		this._THRESHOLD		= 50;
+
+		//this._rootName 		= {'id': 'terrorists', 'value': 0, 'color': '#000000'};
+		//this.tree 			= new Tree(this._rootName);
 
 		this.activeAttack 	= arrayInit(attacktypeCodes.codes.length, false);
 		this.activeTarget 	= arrayInit(targettypeCodes.codes.length, false);
@@ -48,8 +57,9 @@ class SankeyDiagram {
 								'#212121' ];
 	}
 
-	buildNodes(origNodes)
+	buildNodes()
 	{
+		this.nodes = [];
 		let nodeIDs = Object.keys(this.activeNodes);
 
 		for (let i = 0; i < nodeIDs.length; i++)
@@ -61,9 +71,34 @@ class SankeyDiagram {
 		}
 	}
 
+	generateLinksArray(ref) {
+		if (ref === null) {
+			ref = [];
+
+			for (let i = 0; i < this.colors.length; i++)
+			{
+				ref.push(i);
+			}
+		}
+
+		this.links 		 = [];
+		this.activeNodes = [];
+
+		for (let i = 0; i < this._links.length; i++)
+		{
+			let link = this._links[i];
+			//this.tree.add({'id': link.target.id, 'value': link.target., 'color': link.color}, {'id': link.source.id, 'value': 1, 'color': link.color}, this.tree.traverseBF);
+			if (link.value > this._THRESHOLD && ref.indexOf(this.colors.indexOf(link.color)) !== -1)  {
+				this.activeNodes[link.source] = true;
+				this.activeNodes[link.target] = true;
+				this.links.push(link);
+			}
+		}
+		
+	};
+
 	buildLinks(data) {
 		// Links: Terrorist Group -> Attack Type -> Target Type -> Weapon Type
-		const THRESHOLD = 200;
 		const ATTACK = 0, TARGET = 1, WEAPON = 2;
 
 		var terroristAttacks = [];
@@ -74,194 +109,52 @@ class SankeyDiagram {
 
 		// PRIVATE FUNCTIONS
 		var makeLink = (terrorist, source, target, color) => {
-			let ret = false;
+			var flagPresent = false;
+			this._links.map((l) => {
+				if ((l.source === source) && (l.target === target) && (l.color === color)) {
+					l.value++;
+					flagPresent |= true;
+				}
+			});
 
-			if (links[terrorist] === undefined) {
-				links[terrorist] = [];
-			}
-			if (links[terrorist][source] === undefined) {
-				links[terrorist][source] = [];
-			}
-			if (links[terrorist][source][target] === undefined) {
-				links[terrorist][source][target] = {"value": 1, "color": color};
+			if (!flagPresent) {
+				//this.tree.add({'id': target, 'value': 1, 'color': color}, {'id': source, 'value': 1, 'color': color}, this.tree.traverseBF);
+
+				let link = {"source": source, "target": target, "value": 1, "color": color};
+				this._links.push(link);
 			}
 			else {
-				links[terrorist][source][target].value++;
-			}
+				//this.tree.incLinkValue({'id': source, 'color': color}, {'id': target, 'color': color}, this.tree.traverseBF);
+			}	
 		}
 
 		var verifySrcTrgt = () => {
-			//console.log(this.completeLinks);
 			let terrorists = Object.keys(this.completeLinks);
-			
-			for (let i = 0; i < terrorists.length; i++)
-			{
-				let terroristLinks = this.completeLinks[terrorists[i]];
-				let attacks = {"arr": [], "qty": [], "pass": []};
-				let targets = {"arr": [], "qty": [], "pass": []};
-				let weapons = {"arr": [], "qty": [], "pass": []};
-
-				for (let j = 0; j < terroristLinks.length; j++)
-				{
-					let attack = terroristLinks[j][ATTACK];
-					if (attacks.arr.pushIfNotExists(attack)) {
-						attacks.qty[attack] = 1;
-						attacks.pass[attack] = false;
-					}
-					else {
-						attacks.qty[attack]++;
-					}
-					if (attacks.pass[attack] === false && attacks.qty[attack] > THRESHOLD) {
-						attacks.pass[attack] = true;
-					}
-					
-					let target = terroristLinks[j][TARGET];
-					if (targets.arr.pushIfNotExists(target)) {
-						targets.qty[target] = 1;
-						targets.pass[target] = false;
-					}
-					else {
-						targets.qty[target]++;
-					}
-					if (targets.pass[target] === false && targets.qty[target] > THRESHOLD) {
-						targets.pass[target] = true;
-					}
-
-					let weapon = terroristLinks[j][WEAPON];
-					if (weapons.arr.pushIfNotExists(weapon)) {
-						weapons.qty[weapon] = 1;
-						weapons.pass[weapon] = false;
-					}
-					else {
-						weapons.qty[weapon]++;
-					}
-					if (weapons.pass[weapon] === false && weapons.qty[weapon] > THRESHOLD) {
-						weapons.pass[weapon] = true;
-					}
-				}
-
-				terroristAttacks[terrorists[i]] = attacks;
-				terroristTargets[terrorists[i]] = targets;
-				terroristWeapons[terrorists[i]] = weapons;
-
-				this.selectedLinks[terrorists[i]] = [];
-
-				for (let j = 0; j < terroristLinks.length; j++)
-				{
-					let attack = terroristLinks[j][ATTACK];
-					let target = terroristLinks[j][TARGET];
-					let weapon = terroristLinks[j][WEAPON];
-					
-					if (attacks.pass[attack] && targets.pass[target] && weapons.pass[weapon]) {
-						this.selectedLinks[terrorists[i]].push(terroristLinks[j]);
-					}
-				}
-			}
-			
-			
-			//let terrorists = this.completeLinks
-			
-			let obj = this.terrorists[terrorist];
-			let ret = false;
-
-			for (let i = 0; (i < obj.length) && (ret === false); i++)
-			{
-				if ((obj[i].source === source) && (obj[i].target === target)) {
-					this.terrorists[terrorist][i].value++;
-					ret = true;
-				}
-			}
-
-			if (ret === false) {
-				let link = {"source": source, "target": target, "value": 1, "color": '', "class": ""};
-				this.terrorists[terrorist].push(link);
-			}
-			
-		};
-
-		var generateLinksArray = () => {
-			let terrorists = Object.keys(this.completeLinks);
-			let terrorLinks = [];
+			let source, target;
 
 			for (let i = 0; i < terrorists.length; i++)
 			{
-				let selLinks = this.completeLinks[terrorists[i]];
-				let source;
-				let target;
+				let terrorist = terrorists[i];
+				let linksTerrorist = this.completeLinks[terrorist];
+				let color = this.colors[i];
 
-				for (let j = 0; j < selLinks.length; j++)
+				//this.tree.add({'id': terrorist, 'value': 1, 'color': color}, this._rootName, this.tree.traverseBF);
+
+				for (let j = 0; j < linksTerrorist.length; j++)
 				{
-					source = terrorists[i];
-					target = selLinks[j][ATTACK];
-					makeLink(terrorists[i], source, target, this.colors[i]);
+					source = terrorist;
+					target = linksTerrorist[j][ATTACK];
+					makeLink(terrorist, source, target, color);
 
 					source = target;
-					target = selLinks[j][TARGET];
-					makeLink(terrorists[i], source, target, this.colors[i]);
+					target = linksTerrorist[j][TARGET];
+					makeLink(terrorist, source, target, color);
 
 					source = target;
-					target = selLinks[j][WEAPON];
-					makeLink(terrorists[i], source, target, this.colors[i]);
+					target = linksTerrorist[j][WEAPON];
+					makeLink(terrorist, source, target, color);		
 				}
 			}
-
-			console.log(links)
-
-			for (let t = 0; t < terrorists.length; t++)
-			{
-				let sources = Object.keys(links[terrorists[t]]);
-				for (let i = 0; i < sources.length; i++)
-				{
-					let source = sources[i];
-					let targets = Object.keys(links[terrorists[t]][source]);
-
-					for (let j = 0; j < targets.length; j++)
-					{
-						let target = targets[j];
-
-						if (links[terrorists[t]][source][target].value > THRESHOLD)
-							this.links.push({
-								"source": source,
-								"target": target,
-								"value": links[terrorists[t]][source][target].value,
-								"color": links[terrorists[t]][source][target].color,
-								"class": ""
-							});
-					}
-				}
-			}
-
-			console.log(this.links)
-
-			//console.log(keys)
-			/*
-			for (let i = 0; i < keys.length; i++)
-			{
-				let key = keys[i];
-				//if (key === "Taliban" || key === "Boko Haram")
-				for (let j = 0; j < this.terrorists[key].length; j++)
-				{
-					if (this.terrorists[key][j].value < THRESHOLD) {
-						this.terrorists[key][j].source
-						reduceValue++;
-						/*
-						this.terrorists[key][j].color = this.colors[i];
-						this.links.push(this.terrorists[key][j]);
-						console.log(this.terrorists[key][j])
-						*//*
-					}
-				}
-
-				this.terrorists[key].map((t) => {
-					t.value -= reduceValue;
-					if (t.value > 0) {
-						t.color = this.colors[i];
-						this.links.push(t);
-					}
-					//console.log(t);
-				})
-				//this.links = this.links.concat(this.terrorists[key]);
-			}*/
 		};
 
 		// METHOD ITSELF
@@ -289,18 +182,90 @@ class SankeyDiagram {
 			let id_weapon = weapontypeCodes.column + "_" + weapon_name;
 			
 			this.completeLinks[id_terrorist].push([id_attack, id_target, id_weapon]);
-
+			/*
 			this.activeNodes[id_terrorist]	= true;
-			this.activeNodes[id_attack] 	= true;
-			this.activeNodes[id_target] 	= true;
-			this.activeNodes[id_weapon] 	= true;
+			this.activeNodes[id_attack]		= true;
+			this.activeNodes[id_target]		= true;
+			this.activeNodes[id_weapon]		= true;
+			*/
 		}
 
 		verifySrcTrgt();
-		generateLinksArray();
+		this.generateLinksArray(null);
+	}
+/*
+	removeValue(link, value) {
+		link.value = 0;
+		console.log('height:', link.source.height);
+
+		if (link.source.height === 3) {
+			console.log(link);
+			//debugger;
+			return;
+		}
+		else {
+			link.source.targetLinks.forEach((l) => {
+				if (l.color === link.color) {
+					//debugger;
+
+					console.log('(antes) link value:', l.value, 'reduceValue:', value)
+					l.value -= value;
+					console.log('(depois) link value:', l.value, 'reduceValue:', value)
+
+					if (l.value < this._THRESHOLD) {
+						//value += l.value;
+						//debugger;
+						console.log(value + l.value);
+						this.removeValue(l, value + l.value);
+					}
+				}
+			});
+		}
 	}
 
-	show() {
+	recursiveRemoval() {
+		var len = this.links.length;
+
+		for (let h = 0; h < 2; h++)
+		{
+			for (let i = 0; i < len; i++)
+			{
+				let l = this.links[i];
+				console.log(i, 'of', len)
+				//debugger;
+				console.log(l);
+				if (l.target.height === h) {
+					console.log('old value = ', l.value);
+					if (h > 0)
+						l.value = l.target.sourceLinks.reduce((a, b) => (a.value + b.value), 0);
+					console.log('new value = ', l.value);
+					
+					if (l.value < this._THRESHOLD) {
+						//this.links.splice(i, 1);
+						l.value = 0;
+						//this.removeValue(l, l.value);
+
+						/*
+						if (l.value === 0) {
+							this.links.splice(i, 1)
+						}
+						*//*
+					}
+				}
+			}	
+		}
+
+		this.sankey.update(this.sankeyObj);
+		//this.link.attr("d", d3.sankeyLinkHorizontal());
+	};
+*/
+
+	selectNodesLinks(terrorists) {
+		this.generateLinksArray(terrorists);
+		this.buildNodes();
+	}
+
+	show(terrorists) {
 		var dy0, dy1, nodeHeight;
 		var that = this;
 
@@ -327,24 +292,29 @@ class SankeyDiagram {
 			d3.select(this).classed("active", false);
 		}
 
+		this.selectNodesLinks(terrorists);
+
 		this.sankeyObj = {"nodes": this.nodes, "links": this.links};
 		this.sankey(this.sankeyObj);
+
+		//this.recursiveRemoval();
 
 		this.link = this.link.data(this.sankeyObj.links)
 							 .enter()
 							 .append("path")
-							 .attr("class", (d) => { return "link " + d.class;})
+							 .attr("class", (d) => "link")
 							 .attr("d", d3.sankeyLinkHorizontal())
-							 .attr("stroke", (d) => {
-							 	return d.color;
+							 .attr("stroke", (d) => d.color)
+							 .attr("stroke-width", (d) => Math.max(1, d.width))
+							 .on("mouseover", function(d, i) {
+							 	/*console.log(d);
+							 	console.log(this);*/
 							 })
-							 .attr("stroke-width", (d) => {
-								 return Math.max(1, d.width);
-							 });
+							 .on("click", function(d) { console.log(d); });
 
 		this.link.append("title")
 				 .text((d) => {
-				 	return d.source.name + " → " + d.target.name + "\n" + d.value.toString() + " ataques";
+				 	return d.source.name + " -> " + d.target.name + "\n" + d.value.toString() + " ataques";
 				 });
 
 		this.node = this.node.data(this.sankeyObj.nodes)

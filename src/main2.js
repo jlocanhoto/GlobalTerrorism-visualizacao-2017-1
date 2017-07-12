@@ -3,15 +3,23 @@ class Main{
         this.b_dimension = dimensions.buttons;
         this.s_dimension = dimensions.stacked;
         this.m_dimension = dimensions.map;
+        this.k_dimension = dimensions.sankey;
 
         this.selected_gtd = selected_gtd;
+        this.data = null;
     }
 
     show( ){
+        var p1 = this._loadData( );
+
         this._buttons( );
         this._stacked( );
         this._map( );
 
+        p1.then((data) => {
+            this.data = data;
+            this._sankey( );
+        });
     }
 
     _buttons( ){
@@ -61,17 +69,39 @@ class Main{
 
     }
 
+    _sankey( ) {
+        var sankey_div = d3.select("#sankey")
+                            .style("top", this.k_dimension.y + "px")
+                            .style("left", this.k_dimension.x + "px")
+                            .style("width", this.k_dimension.width + "px")
+                            .style("height", this.k_dimension.height + "px")
+                            .style("position", "absolute");
+
+        this.sankey = new SankeyDiagram(this.k_dimension.def, sankey_div);
+        this.sankey.buildLinks(this.data);
+        this.sankey.buildNodes();
+    }
+
+    _loadData() {
+        return (new Promise((resolve, reject) => {
+            d3.csv(this.selected_gtd, (data) => {
+                resolve(data);
+            });
+        }));        
+    }
+
     __select(selected){
-        d3.csv(this.selected_gtd, (data) => {
-            var stacked = this.__convert_stacked(data);
-            var heatmap = this.__convert_heatmap(data);
+        var stacked = this.__convert_stacked(this.data);
+        var heatmap = this.__convert_heatmap(this.data);
 
-            this.stacked.show(stacked, this.selected);
+        this.stacked.show(stacked, this.selected);
 
-            this.map.show(this.__capital( ), 6, false);
-            this.map.heatmap(heatmap);
+        this.map.show(this.__capital( ), 6, false);
+        this.map.heatmap(heatmap);
 
-        });
+        console.log(gnames.indexOf(this.selected), this.selected)
+        
+        this.sankey.show([1,2]);
     }
 
     __convert_stacked(data){
