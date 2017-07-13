@@ -18,7 +18,7 @@ class Main{
 
         p1.then(( data ) => {
             this.data = data;
-            // this._sankey( );
+            this._sankey( );
         });
     }
 
@@ -66,14 +66,14 @@ class Main{
     }
 
     _sankey( ) {
-        var sankey_div = d3.select("#sankey")
-                            .style("top", this.k_dimension.y + "px")
-                            .style("left", this.k_dimension.x + "px")
-                            .style("width", this.k_dimension.width + "px")
-                            .style("height", this.k_dimension.height + "px")
+        var sankeyDiv = d3.select("#sankey")
+                            .style("top", this.kDimension.y + "px")
+                            .style("left", this.kDimension.x + "px")
+                            .style("width", this.kDimension.width + "px")
+                            .style("height", this.kDimension.height + "px")
                             .style("position", "absolute");
 
-        this.sankey = new SankeyDiagram(this.k_dimension.def, sankey_div);
+        this.sankey = new SankeyDiagram(this.kDimension.def, sankeyDiv);
         this.sankey.buildLinks(this.data);
         this.sankey.buildNodes();
         this.sankey.genSankey();
@@ -99,10 +99,10 @@ class Main{
 
         this.stacked.show( stacked, this.selected );
 
+        this.sankey.show( this.selected );
+
         this.map.show( this.capital, this.zoom, false );
         this.map.heatmap( heatmap );
-
-        this.sankey.show(this.selected);
     }
 
     __convert_stacked( data ) {
