@@ -13,19 +13,6 @@ class SankeyDiagram {
 								.nodePadding(7)
 								.extent([[1, 1], [_width - 1, _height - 6]]);
 
-		this.link			= this.svg.append("g")
-								  .attr("class", "links")
-								  .attr("fill", "none")
-								  .attr("stroke", "#000")
-								  .attr("stroke-opacity", 0.2)
-								  .selectAll("path");
-
-		this.node			= this.svg.append("g")
-								  .attr("class", "nodes")
-								  .attr("font-family", "sans-serif")
-								  .attr("font-size", 10)
-								  .selectAll("g");
-
 		this.completeLinks 	= [];
 		this.selectedLinks	= [];
 		this.links			= [];
@@ -55,12 +42,15 @@ class SankeyDiagram {
 								'#f57f17',
 								'#3e2723',
 								'#212121' ];
+
+		this.kount = 0;
 	}
 
 	buildNodes()
 	{
 		this.nodes = [];
 		let nodeIDs = Object.keys(this.activeNodes);
+		//console.log(this.activeNodes)
 
 		for (let i = 0; i < nodeIDs.length; i++)
 		{
@@ -73,28 +63,29 @@ class SankeyDiagram {
 
 	generateLinksArray(ref) {
 		if (ref === null) {
-			ref = [];
-
-			for (let i = 0; i < this.colors.length; i++)
-			{
-				ref.push(i);
-			}
+			ref = gnames.map((g) => "terrorist_" + g.replaceAll(" ", "_"));
+		}
+		else {
+			ref = ref.map((r) => "terrorist_" + r.replaceAll(" ", "_"));
 		}
 
 		this.links 		 = [];
 		this.activeNodes = [];
+		this.kount++;
+		console.log(ref);
 
 		for (let i = 0; i < this._links.length; i++)
 		{
 			let link = this._links[i];
+			//console.log(this.kount, link);
 			//this.tree.add({'id': link.target.id, 'value': link.target., 'color': link.color}, {'id': link.source.id, 'value': 1, 'color': link.color}, this.tree.traverseBF);
-			if (link.value > this._THRESHOLD && ref.indexOf(this.colors.indexOf(link.color)) !== -1)  {
+			if (link.value > this._THRESHOLD && ref.indexOf(link.gname) !== -1)  {
+				//console.log(link.source)
 				this.activeNodes[link.source] = true;
 				this.activeNodes[link.target] = true;
-				this.links.push(link);
+				this.links.push(JSON.parse(JSON.stringify(link)));
 			}
-		}
-		
+		}		
 	};
 
 	buildLinks(data) {
@@ -120,7 +111,7 @@ class SankeyDiagram {
 			if (!flagPresent) {
 				//this.tree.add({'id': target, 'value': 1, 'color': color}, {'id': source, 'value': 1, 'color': color}, this.tree.traverseBF);
 
-				let link = {"source": source, "target": target, "value": 1, "color": color};
+				let link = {"source": source, "target": target, "value": 1, "color": color, "gname": terrorist};
 				this._links.push(link);
 			}
 			else {
@@ -193,6 +184,11 @@ class SankeyDiagram {
 		verifySrcTrgt();
 		this.generateLinksArray(null);
 	}
+
+	genSankey() {
+		this.sankeyObj = {"nodes": this.nodes, "links": this.links};
+		this.sankey(this.sankeyObj);
+	}
 /*
 	removeValue(link, value) {
 		link.value = 0;
@@ -263,11 +259,29 @@ class SankeyDiagram {
 	selectNodesLinks(terrorists) {
 		this.generateLinksArray(terrorists);
 		this.buildNodes();
+		this.sankeyObj = {"nodes": this.nodes, "links": this.links};
+		this.sankey(this.sankeyObj);
+		this.svg.selectAll("g").remove();
 	}
 
 	show(terrorists) {
 		var dy0, dy1, nodeHeight;
 		var that = this;
+
+		this.selectNodesLinks(terrorists);
+
+		this.link			= this.svg.append("g")
+								  .attr("class", "links")
+								  .attr("fill", "none")
+								  .attr("stroke", "#000")
+								  .attr("stroke-opacity", 0.2)
+								  .selectAll("path");
+
+		this.node			= this.svg.append("g")
+								  .attr("class", "nodes")
+								  .attr("font-family", "sans-serif")
+								  .attr("font-size", 10)
+								  .selectAll("g");
 
 		function dragstarted(d) {
 			console.log(d)
@@ -284,6 +298,7 @@ class SankeyDiagram {
 			d3.select(this).select("text").attr("y", (d.y0 + d.y1)/2);
 			d3.select(this).select("rect").attr("y", d.y0);
 
+			console.log(that.sankey)
 			that.sankey.update(that.sankeyObj);
 			that.link.attr("d", d3.sankeyLinkHorizontal());
 		}
@@ -291,13 +306,6 @@ class SankeyDiagram {
 		function dragended(d) {
 			d3.select(this).classed("active", false);
 		}
-
-		this.selectNodesLinks(terrorists);
-
-		this.sankeyObj = {"nodes": this.nodes, "links": this.links};
-		this.sankey(this.sankeyObj);
-
-		//this.recursiveRemoval();
 
 		this.link = this.link.data(this.sankeyObj.links)
 							 .enter()

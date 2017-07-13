@@ -80,6 +80,7 @@ class Main{
         this.sankey = new SankeyDiagram(this.k_dimension.def, sankey_div);
         this.sankey.buildLinks(this.data);
         this.sankey.buildNodes();
+        this.sankey.genSankey();
     }
 
     _loadData() {
@@ -99,9 +100,9 @@ class Main{
         this.map.show(this.__capital( ), 6, false);
         this.map.heatmap(heatmap);
 
-        console.log(gnames.indexOf(this.selected), this.selected)
+        console.log(this.selected);
         
-        this.sankey.show([1,2]);
+        this.sankey.show(this.selected);
     }
 
     __convert_stacked(data){
