@@ -19,8 +19,6 @@ class Map{
     }
 
     show(latlng, zoom, first){
-        var slice = palette.slice(0, this.size);
-
         this.map.setView(latlng, zoom);
         this.tileLayer.addTo(this.map);
 
@@ -33,12 +31,10 @@ class Map{
                                         "radius": 15,
                                         "blur": 10,
                                         "maxZoom": 6,
-                                        "gradient": slice[i],
+                                        "gradient": palette[i],
                               }).addTo(this.map));
             });
-
         }
-
     }
 
     heatmap(heat){
