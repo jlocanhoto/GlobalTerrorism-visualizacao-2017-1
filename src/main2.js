@@ -207,6 +207,6 @@ class Main{
     }
 
     __ratio( ) {
-        return ( ( window.outerWidth - ( 2 * this.bDimension.x ) ) - 10 * ( 2 * this.bDimension.r ) ) / 9;
+        return ( ( (window.outerWidth - 30) - ( 2 * this.bDimension.x ) ) - 10 * ( 2 * this.bDimension.r ) ) / 9;
     }
 }
