@@ -1,30 +1,30 @@
 class Main{
-    constructor(dimensions, selected_gtd){
-        this.b_dimension = dimensions.buttons;
-        this.s_dimension = dimensions.stacked;
-        this.m_dimension = dimensions.map;
-        this.k_dimension = dimensions.sankey;
+    constructor( dimensions, selectedGtd ) {
+        this.bDimension  = dimensions.buttons;
+        this.sDimension  = dimensions.stacked;
+        this.mDimension  = dimensions.map;
+        this.kDimension  = dimensions.sankey;
 
-        this.selected_gtd = selected_gtd;
-        this.data = null;
+        this.selectedGtd = selectedGtd;
+        this.data        = null;
     }
 
-    show( ){
-        var p1 = this._loadData( );
+    show( ) {
+        var p1 = this.__loadData( );
 
         this._buttons( );
         this._stacked( );
         this._map( );
 
-        p1.then((data) => {
+        p1.then(( data ) => {
             this.data = data;
-            this._sankey( );
+            // this._sankey( );
         });
     }
 
-    _buttons( ){
+    _buttons( ) {
         var handler = {
-            set: (t, p, v) => {
+            set: ( t, p, v ) => {
                 t[p] = v;
 
                 this.selected = t;
@@ -34,175 +34,178 @@ class Main{
             }
         };
 
-        var stack = new Proxy([ ], handler);
-        var chosen = 2;
+        var stack = new Proxy( [ ], handler );
 
-        this.b_dimension.p = this.__ratio( );
+        this.bDimension.p = this.__ratio( );
 
-        var buttons = new Buttons(this.b_dimension, "../flags/", stack, chosen);
-        buttons.show( );
+        this.buttons = new Buttons( this.bDimension, "../flags/", stack, 2 );
+        this.buttons.show( );
     }
 
-    _stacked( ){
-        var stacked_div = d3.select("#stacked")
-                            .style("top", this.s_dimension.y + "px")
-                            .style("left", this.s_dimension.x + "px")
-                            .style("width", this.s_dimension.width + "px")
-                            .style("height", this.s_dimension.height + "px")
-                            .style("position", "relative");
+    _stacked( ) {
+        var stackedDiv = d3.select( "#stacked" )
+                            .style( "top", this.sDimension.y + "px" )
+                            .style( "left", this.sDimension.x + "px" )
+                            .style( "width", this.sDimension.width + "px" )
+                            .style( "height", this.sDimension.height + "px" )
+                            .style( "position", "relative" );
 
-        var svg = stacked_div.append("svg")
-                             .attr("width", this.s_dimension.width)
-                             .attr("height", this.s_dimension.height)
-                             .style("align-items", "left");
+        var svg = stackedDiv.append( "svg" )
+                             .attr( "width", this.sDimension.width )
+                             .attr( "height", this.sDimension.height )
+                             .style( "align-items", "left" );
 
-        var dimension = {width: this.s_dimension.width, height: this.s_dimension.height};
+        var dimension = { width: this.sDimension.width, height: this.sDimension.height };
 
-        this.stacked = new StackedArea(dimension, svg);
-
+        this.stacked = new StackedArea( dimension, svg );
     }
 
-    _map( ){
-        this.map = new Map(this.m_dimension, 2);
-        console.log(capitals["null"])
-        this.map.show(capitals["null"], 2, true);
-
+    _map( ) {
+        this.map = new Map( this.mDimension, 2 );
+        this.map.show( capitals[ null ], 2, true );
     }
 
     _sankey( ) {
-        var sankey_div = d3.select("#sankey")
-                            .style("top", this.k_dimension.y + "px")
-                            .style("left", this.k_dimension.x + "px")
-                            .style("width", this.k_dimension.width + "px")
-                            .style("height", this.k_dimension.height + "px")
-                            .style("position", "absolute");
+        var sankeyDiv = d3.select( "#sankey" )
+                            .style( "top", this.kDimension.y + "px" )
+                            .style( "left", this.kDimension.x + "px" )
+                            .style( "width", this.kDimension.width + "px" )
+                            .style( "height", this.kDimension.height + "px" )
+                            .style( "position", "absolute" );
 
-        this.sankey = new SankeyDiagram(this.k_dimension.def, sankey_div);
-        this.sankey.buildLinks(this.data);
-        this.sankey.buildNodes();
+        this.sankey = new SankeyDiagram( this.kDimension.def, sankeyDiv );
+        this.sankey.buildLinks( this.data );
+        this.sankey.buildNodes( );
     }
 
-    _loadData() {
-        return (new Promise((resolve, reject) => {
-            d3.csv(this.selected_gtd, (data) => {
-                resolve(data);
+    __loadData( ) {
+        var load = new Promise(( resolve, reject ) => {
+            d3.csv( this.selectedGtd, ( data ) => {
+                resolve( data );
             });
-        }));        
-    }
-
-    __select(selected){
-        var stacked = this.__convert_stacked(this.data);
-        var heatmap = this.__convert_heatmap(this.data);
-
-        this.stacked.show(stacked, this.selected);
-
-        this.map.show(this.__capital( ), 6, false);
-        this.map.heatmap(heatmap);
-
-        console.log(gnames.indexOf(this.selected), this.selected)
-        
-        this.sankey.show([1,2]);
-    }
-
-    __convert_stacked(data){
-        var before = new Array(this.selected.length).fill(0);
-        var unique = [ ];
-
-        data = data.filter((d) => {
-            return this.selected.indexOf(d.gname) > -1 && +d.nkill >= 0;
-
         });
 
-        for(var i = 0; i < data.length; i++){
-            var sum = +data[i].nkill;
-            var current_date = new Date(+data[i].iyear, +data[i].imonth - 1, +data[i].iday);
+        return load;
+    }
 
-            for(var x = i + 1; x < data.length; x++){
-                var post_date = new Date(+data[x].iyear, +data[x].imonth - 1, +data[x].iday);
+    __select( selected ) {
+        var stacked = this.__convert_stacked( this.data );
+        var heatmap = this.__convert_heatmap( this.data );
 
-                if(current_date.getTime( ) == post_date.getTime( )){
-                    sum = sum + (+data[x].nkill);
+        this.__capital( );
 
+        this.buttons.setColor( this.selected );
+
+        this.stacked.show( stacked, this.selected );
+
+        this.map.show( this.capital, this.zoom, false );
+        this.map.heatmap( heatmap );
+
+        // this.sankey.show([ 1, 2 ]);
+    }
+
+    __convert_stacked( data ) {
+        var before      = new Array( this.selected.length ).fill( 0 );
+        var unique      = [ ];
+        var currentDate = null;
+        var postDate    = null;
+        var sum         = 0;
+
+        data = data.filter(( d ) => {
+            return this.selected.indexOf( d.gname ) > -1 && +d.nkill >= 0;
+        });
+
+        for ( var i = 0; i < data.length; i++ ) {
+            sum = +data[ i ].nkill;
+            currentDate = new Date( +data[ i ].iyear, +data[ i ].imonth - 1, +data[ i ].iday );
+
+            for ( var x = i + 1; x < data.length; x++ ) {
+                postDate = new Date( +data[ x ].iyear, +data[ x ].imonth - 1, +data[ x ].iday );
+
+                if ( currentDate.getTime( ) == postDate.getTime( ) ) {
+                    sum = sum + ( +data[ x ].nkill );
                 }
-                else{
-                    unique.push({gname: data[x].gname, date: current_date, nkill: sum});
+                else {
+                    unique.push({ gname: data[ x ].gname, date: currentDate, nkill: sum });
                     i = x;
                     break;
-
                 }
-
             }
         }
 
-        unique = unique.map((d) => {
-            var g = { }
+        unique = unique.map(( d ) => {
+            var g  = { };
             g.date = d.date;
 
-            this.selected.forEach((s, i) => {
+            this.selected.forEach(( s, i ) => {
+                if ( d.gname == s ) {
+                    g[ s ] = d.nkill + before[ i ];
+                }
+                else {
+                    g[ s ] = before[ i ];
+                }
 
-                if(d.gname == s)
-                    g[s] = d.nkill + before[i];
-                else
-                    g[s] = before[i];
-
-                before[i] = g[s];
+                before[ i ] = g[ s ];
             });
 
             return g;
         });
 
         return unique;
-
     }
 
-    __convert_heatmap(data){
+    __convert_heatmap( data ) {
         var heatmaps = [ ];
-        var scales = [ ];
+        var heatmap  = [ ];
+        var deaths   = [ ];
+        var scales   = [ ];
+        var extent   = null;
+        var dScale   = null;
 
-        this.selected.forEach((s) => {
-            var deaths = [ ];
+        this.selected.forEach(( s ) => {
+            deaths = [ ];
 
-            data.forEach((d) => {
-                if(d.gname == s)
-                    deaths.push(+d.nkill);
-
+            data.forEach(( d ) => {
+                if ( d.gname == s ){
+                    deaths.push( +d.nkill );
+                }
             });
 
-            var dScale = d3.scaleLinear( ).range([0., 1.]);
-            var extent = d3.extent(deaths);
+            extent = d3.extent( deaths );
+            dScale = d3.scaleLinear( ).range([ 0., 1. ]);
 
-            dScale.domain(extent);
-
-            scales.push(dScale);
-
+            dScale.domain( extent );
+            scales.push( dScale );
         });
 
-        this.selected.forEach((s, i) => {
-            var heatmap = [ ];
+        this.selected.forEach(( s, i ) => {
+            heatmap = [ ];
 
-            data.forEach((d) => {
-                if(+d.latitude != 0 && (+d.longitude) != 0 && d.gname == s)
-                    heatmap.push([+d.latitude, +d.longitude, scales[i](+d.nkill)]);
-
+            data.forEach(( d ) => {
+                if ( +d.latitude != 0 && (+d.longitude) != 0 && d.gname == s ){
+                    heatmap.push([ +d.latitude, +d.longitude, scales[ i ]( +d.nkill ) ]);
+                }
             });
 
-            heatmaps.push(heatmap);
+            heatmaps.push( heatmap );
         });
 
         return heatmaps;
     }
 
-    __capital( ){
+    __capital( ) {
         var group = null;
+        this.zoom = 2;
 
-        if(this.selected.length > 0)
-            group = this.selected[0];
+        if ( this.selected.length == 1){
+            group = this.selected[ 0 ];
+            this.zoom = 6;
+        }
 
-        return capitals[group];
-
+        this.capital = capitals[ group ];
     }
 
-    __ratio( ){
-        return ((window.outerWidth - (2 * this.b_dimension.x)) - 10 * (2 * this.b_dimension.r)) / 9;
+    __ratio( ) {
+        return ( ( window.outerWidth - ( 2 * this.bDimension.x ) ) - 10 * ( 2 * this.bDimension.r ) ) / 9;
     }
 }

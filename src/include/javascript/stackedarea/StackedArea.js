@@ -3,7 +3,7 @@ class StackedArea{
 
       var margin = {
           focus: {
-              top: 20, right: 20, bottom: 110, left: 40
+              top: 50, right: 0, bottom: 110, left: 40
           },
           context: {
               top: 230, right: 20, bottom: 30, left: 40
@@ -18,7 +18,7 @@ class StackedArea{
       this.xCScale = d3.scaleTime( ).range([0, width]);
       this.yFScale = d3.scaleLinear( ).range([heightFocus, 0]);
       this.yCScale = d3.scaleLinear( ).range([heightContext, 0]);
-      this.cScale = d3.scaleOrdinal( ).range(d3.schemeCategory10);
+      this.cScale = d3.scaleOrdinal( ).range(["#225ea8", "#e31a1c"]);
 
       this.stack = d3.stack( );
 
@@ -83,8 +83,6 @@ class StackedArea{
                     .extent([[0, 0], [width, heightFocus]])
                     .on("zoom", ( ) => { this._zoomed( ); });
 
-      this.timeParser = d3.timeParse("%m/%d/%y");
-
       this.width = width;
 
   }
@@ -122,27 +120,33 @@ class StackedArea{
       var fSelection = this.focus.selectAll("path");
       var cSelection = this.context.selectAll("path");
 
-      if(fSelection.empty( ))
+      if(fSelection.empty( )) {
           this.focus.selectAll("path")
                     .attr("class", "area")
                     .attr("fill", (d) => { return this.cScale(d.key); })
                     .attr("d", this.areaFocus);
-      else
+      }
+      else {
           this.focus.selectAll(".layer")
                     .select("path")
+                    .attr("class", "area")
                     .attr("fill", (d) => { return this.cScale(d.key); })
                     .attr("d", this.areaFocus);
+      }
 
-      if(cSelection.empty( ))
+      if(cSelection.empty( )) {
           this.context.selectAll("path")
                       .attr("class", "area")
                       .attr("fill", (d) => { return this.cScale(d.key); })
                       .attr("d", this.areaContext);
-      else
+      }
+      else {
           this.context.selectAll(".layer")
                       .select("path")
+                      .attr("class", "area")
                       .attr("fill", (d) => { return this.cScale(d.key); })
                       .attr("d", this.areaContext);
+      }
 
       this.xAxisFocus = d3.axisBottom(this.xFScale).ticks(d3.timeYear.every(5));
       this.yAxisFocus = d3.axisLeft(this.yFScale);
@@ -156,14 +160,26 @@ class StackedArea{
 
       var selected = this.context.select(".brush");
 
-      if (selected.empty( ))
+      if (selected.empty( )) {
           this.context.append("g").attr("class", "brush");
+      }
 
       this.context.select(".brush").call(this.brush)
                   .call(this.brush.move, this.xFScale.range( ));
 
-      return;
+      var text = this.container.select("#legend");
 
+      if (text.empty( )) {
+          this.container.append("text")
+                        .attr("text-anchor", "middle")
+                        .attr("id", "legend")
+                        .attr("x", (this.width + 60) / 2)
+                        .attr("y", 40)
+                        .attr("font-family", "sans-serif")
+                        .text("Accumulative Deaths");
+      }
+
+      return;
   }
 
   _brushed( ){
@@ -176,7 +192,6 @@ class StackedArea{
       this.focus.selectAll(".area").attr("d", this.areaFocus);
       this.container.select("#xFocus").call(this.xAxisFocus);
       this.container.select(".zoom").call(this.zoom.transform, identity);
-
   }
 
   _zoomed( ){
@@ -188,7 +203,6 @@ class StackedArea{
       this.focus.selectAll(".area").attr("d", this.areaFocus);
       this.container.select("#xFocus").call(this.xAxisFocus);
       this.context.select(".brush").call(this.brush.move, this.xFScale.range( ).map(t.invertX, t));
-
   }
 
   _max(data){
